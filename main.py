@@ -3,12 +3,7 @@ import pathlib
 import sys
 import math
 
-# Get the package directory
-#package_dir = str(pathlib.Path(__file__).resolve().parents[2])
-# Add the package directory into sys.path if necessary
-#if package_dir not in sys.path:
-#    sys.path.insert(0, package_dir)
-
+from material.surface import SurfaceMaterial
 from core.base import Base
 from core_ext.camera import Camera
 from core_ext.mesh import Mesh
@@ -17,27 +12,18 @@ from core_ext.scene import Scene
 from core_ext.texture import Texture
 from extras.movement_rig import MovementRig
 from geometry.sphere import SphereGeometry
+from geometry.geometry import Geometry
 from light.ambient import AmbientLight
 from light.directional import DirectionalLight
 from light.point import PointLight
 from material.flat import FlatMaterial
 from material.lambert import LambertMaterial
 from material.phong import PhongMaterial
+from material.basic import BasicMaterial
+from circle import Circle
 
 
 class Example(Base):
-    """
-    Demonstrate:
-    - the flat shading model;
-    - the Lambert illumination model and Phong shading model;
-    - the Phong illumination model and Phong shading model.
-    The Lambert illumination model uses a combination of ambient and diffuse lighting.
-    The Phong illumination model uses ambient, diffuse, and specular lighting.
-    In the flat shading model, the light calculations are performed in the vertex shader.
-    In the Phong shading model, the light calculations are performed in the fragment shader.
-
-    Move a camera: WASDRF(move), QE(turn), TG(look).
-    """
     def initialize(self):
         print("Initializing program...")
         self.renderer = Renderer()
@@ -46,17 +32,21 @@ class Example(Base):
         self.rig = MovementRig()
         self.rig.add(self.camera)
         self.rig.set_position([0, 0, 6])
+        # self.rig.set_position([0, 0, 0.5])
         self.scene.add(self.rig)
 
-        # four light sources
+
+        # Lighting
         ambient_light = AmbientLight(color=[0.1, 0.1, 0.1])
-        self.scene.add(ambient_light)
         directional_light = DirectionalLight(color=[3.0, 3.0, 3.0], direction=[-1, -1, -2])
-        self.scene.add(directional_light)
         point_light1 = PointLight(color=[0.9, 0, 0], position=[4, 0, 0])
-        self.scene.add(point_light1)
         point_light2 = PointLight(color=[0, 0.9, 0], position=[-4, 0, 0])
+        self.scene.add(ambient_light)
+        self.scene.add(directional_light)
+        self.scene.add(point_light1)
         self.scene.add(point_light2)
+
+        basecolor_material = BasicMaterial()
 
         # lighted materials with a color
         flat_material = FlatMaterial(
@@ -72,17 +62,15 @@ class Example(Base):
             number_of_light_sources=4
         )
 
+
         # lighted spheres with a color
         sphere_geometry = SphereGeometry()
         sphere_left_top = Mesh(sphere_geometry, flat_material)
         sphere_left_top.set_position([-2.5, 1.5, 0])
-        self.scene.add(sphere_left_top)
         sphere_center_top = Mesh(sphere_geometry, lambert_material)
         sphere_center_top.set_position([0, 1.5, 0])
-        self.scene.add(sphere_center_top)
         sphere_right_top = Mesh(sphere_geometry, phong_material)
         sphere_right_top.set_position([2.5, 1.5, 0])
-        self.scene.add(sphere_right_top)
 
         # lighted materials with a texture
         textured_flat_material = FlatMaterial(
@@ -98,23 +86,37 @@ class Example(Base):
             number_of_light_sources=4
         )
 
+
         # lighted spheres with a texture
         sphere_left_bottom = Mesh(sphere_geometry, textured_flat_material)
         sphere_left_bottom.set_position([-2.5, -1.5, 0])
-        self.scene.add(sphere_left_bottom)
         sphere_center_bottom = Mesh(sphere_geometry, textured_lambert_material)
         sphere_center_bottom.set_position([0, -1.5, 0])
-        self.scene.add(sphere_center_bottom)
         sphere_right_bottom = Mesh(sphere_geometry, textured_phong_material)
         sphere_right_bottom.set_position([2.5, -1.5, 0])
+
+        self.scene.add(sphere_left_top)
+        self.scene.add(sphere_center_top)
+        self.scene.add(sphere_right_top)
+        self.scene.add(sphere_left_bottom)
+        self.scene.add(sphere_center_bottom)
         self.scene.add(sphere_right_bottom)
 
+
+        # testing
+        circle = Circle(x=2.0, y=1.5, z=3.0, radius=0.1, res=25, r=1.0, g=0.0, b=1.0)
+
+        self.scene.add(circle)
+
+
+
+
     def update(self):
-        speed = 0.1
-        self.rig.rotate_y(math.pi * speed * self.delta_time, False);
+        speed = -0.01
+        # self.circle_rig.translate(0, speed, 0)
+        # self.rig.rotate_y(math.pi * speed * self.delta_time, False);
         # self.rig.update(self.input, self.delta_time)
         self.renderer.render(self.scene, self.camera)
-
 
 # Instantiate this class and run the program
 Example(screen_size=[800, 600]).run()
