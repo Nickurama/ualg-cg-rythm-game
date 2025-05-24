@@ -119,7 +119,8 @@ class Example(Base):
         self.ui = UI()
         self.scene.add(self.ui)
 
-        self.bm_player = BmPlayer("beatmap.bm", self.scene)
+        # self.bm_player = BmPlayer("beatmaps/beatmap.bm", self.scene)
+        self.bm_player = BmPlayer("beatmaps/beatmap_rainbow.bm", self.scene)
         self.bm_player.start(time.perf_counter_ns())
 
     def update(self):

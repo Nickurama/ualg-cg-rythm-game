@@ -86,6 +86,7 @@ class BmPlayer:
         self.spawn_notes(elapsed_ms)
         self.update_notes(elapsed_ms)
         self.remove_notes()
+        self.check_end_condition()
 
         self.last_time_ns = curr_time_ns
 
@@ -138,8 +139,9 @@ class BmPlayer:
             end_y = self.POSY_PERFECT
             total_travel = abs(end_y - start_y)
             target_y = start_y - total_travel * target_y_ratio
-            if (target_y_ratio > 1.0):
+            if (target_y_ratio > 1.0 and not note.has_reached_perfect_line):
                 print(f"note reached end at {elapsed_ms}")
+                note.has_reached_perfect_line = True
             if (target_y_ratio > 1.3):
                 self.remove_note(note)
             note.set_position([note.local_position[0], target_y, note.local_position[2]]);
@@ -155,10 +157,16 @@ class BmPlayer:
             print("despawning note")
         self.notes_remove_queue = []
 
+    def check_end_condition(self):
+        if (self.curr_note >= len(self.notes_data) and len(self.spawned_notes) == 0):
+            print("beatmap has reached the end")
+            self.started = False
+
     def start(self, start_time_ns):
         self.start_time_ns = start_time_ns
         self.started = True
         self.last_time_ns = start_time_ns
+
 
     @staticmethod
     def parse_beatmap(file_path: str):

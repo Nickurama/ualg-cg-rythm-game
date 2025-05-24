@@ -30,6 +30,7 @@ class Note(MovementRig):
         self.add(self.mesh)
         self.set_position([x, y, z])
         self.spawn_time = spawn_time
+        self.has_reached_perfect_line = False
 
     @staticmethod
     def fillColor(r, g, b, n):
