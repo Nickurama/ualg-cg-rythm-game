@@ -13,6 +13,7 @@ class Renderer:
         GL.glEnable(GL.GL_MULTISAMPLE)
         GL.glClearColor(*clear_color, 1)
         self._window_size = pygame.display.get_surface().get_size()
+        print(self._window_size)
         self._shadows_enabled = False
 
     @property

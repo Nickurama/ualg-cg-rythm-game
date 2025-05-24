@@ -2,6 +2,7 @@
 import pathlib
 import sys
 import math
+import pygame
 
 from material.surface import SurfaceMaterial
 from core.base import Base
@@ -26,13 +27,13 @@ from note import Note
 class Example(Base):
     def initialize(self):
         print("Initializing program...")
+        print(pygame.display.get_surface().get_size())
         self.renderer = Renderer()
         self.scene = Scene()
         self.camera = Camera(aspect_ratio=800/600)
         self.rig = MovementRig()
         self.rig.add(self.camera)
         self.rig.set_position([0, 0, 6])
-        # self.rig.set_position([0, 0, 0.5])
         self.scene.add(self.rig)
 
 
@@ -112,6 +113,7 @@ class Example(Base):
 
 
 
+
     def update(self):
         speed = -0.01
         # print(self.delta_time)
@@ -121,4 +123,4 @@ class Example(Base):
         self.renderer.render(self.scene, self.camera)
 
 # Instantiate this class and run the program
-Example(screen_size=[800, 600]).run()
+Example(screen_size=[1200, 900]).run()
