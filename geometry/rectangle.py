@@ -2,7 +2,7 @@ from geometry.geometry import Geometry
 
 
 class RectangleGeometry(Geometry):
-    def __init__(self, width=1, height=1, position=(0, 0), alignment=(0.5, 0.5)):
+    def __init__(self, width=1.0, height=1.0, position=(0, 0), alignment=(0.5, 0.5)):
         super().__init__()
         # vertices
         # p2 - p3

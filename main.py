@@ -3,6 +3,7 @@ import pathlib
 import sys
 import math
 import pygame
+import time
 
 from material.surface import SurfaceMaterial
 from core.base import Base
@@ -13,6 +14,7 @@ from core_ext.scene import Scene
 from core_ext.texture import Texture
 from extras.movement_rig import MovementRig
 from geometry.sphere import SphereGeometry
+from geometry.rectangle import RectangleGeometry
 from geometry.geometry import Geometry
 from light.ambient import AmbientLight
 from light.directional import DirectionalLight
@@ -22,12 +24,13 @@ from material.lambert import LambertMaterial
 from material.phong import PhongMaterial
 from material.basic import BasicMaterial
 from note import Note
+from beatmap_player import BmPlayer
+from ui import UI
 
 
 class Example(Base):
     def initialize(self):
         print("Initializing program...")
-        print(pygame.display.get_surface().get_size())
         self.renderer = Renderer()
         self.scene = Scene()
         self.camera = Camera(aspect_ratio=800/600)
@@ -38,10 +41,10 @@ class Example(Base):
 
 
         # Lighting
-        ambient_light = AmbientLight(color=[0.1, 0.1, 0.1])
-        directional_light = DirectionalLight(color=[3.0, 3.0, 3.0], direction=[-1, -1, -2])
-        point_light1 = PointLight(color=[0.9, 0, 0], position=[4, 0, 0])
-        point_light2 = PointLight(color=[0, 0.9, 0], position=[-4, 0, 0])
+        ambient_light = AmbientLight(color=[0.01, 0.01, 0.01])
+        directional_light = DirectionalLight(color=[1.0, 1.0, 1.0], direction=[-1, -1, -2])
+        point_light1 = PointLight(color=[0.1, 0, 0], position=[4, 0, 0])
+        point_light2 = PointLight(color=[0, 0.1, 0], position=[-4, 0, 0])
         self.scene.add(ambient_light)
         self.scene.add(directional_light)
         self.scene.add(point_light1)
@@ -103,23 +106,25 @@ class Example(Base):
         self.scene.add(sphere_center_bottom)
         self.scene.add(sphere_right_bottom)
 
-        circle1 = Note(x=-1.0, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note1.png", r=0.9, g=0.0, b=0.0)
-        circle2 = Note(x=0.0, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note2.png", r=0.9, g=0.0, b=0.0)
-        circle3 = Note(x=1.0, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note3.png", r=0.9, g=0.0, b=0.0)
-        self.scene.add(circle1)
-        self.scene.add(circle2)
-        self.scene.add(circle3)
 
+        # circle1 = Note(x=-1.2, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note1.png", r=0.1, g=0.0, b=0.0)
+        # circle2 = Note(x=-0.4, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note2.png", r=0.1, g=0.0, b=0.0)
+        # circle3 = Note(x= 0.4, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note3.png", r=0.1, g=0.0, b=0.0)
+        # circle4 = Note(x= 1.2, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note1.png", r=0.1, g=0.0, b=0.0)
+        # self.scene.add(circle1)
+        # self.scene.add(circle2)
+        # self.scene.add(circle3)
+        # self.scene.add(circle4)
 
+        self.ui = UI()
+        self.scene.add(self.ui)
 
-
+        self.bm_player = BmPlayer("beatmap.bm", self.scene)
+        self.bm_player.start(time.perf_counter_ns())
 
     def update(self):
-        speed = -0.01
-        # print(self.delta_time)
-        # self.circle_rig.translate(0, speed, 0)
-        # self.rig.rotate_y(math.pi * speed * self.delta_time, False);
-        # self.rig.update(self.input, self.delta_time)
+        curr_time_ns = time.perf_counter_ns()
+        self.bm_player.update(curr_time_ns)
         self.renderer.render(self.scene, self.camera)
 
 # Instantiate this class and run the program

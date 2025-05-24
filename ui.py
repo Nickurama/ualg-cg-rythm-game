@@ -7,29 +7,26 @@ from extras.movement_rig import MovementRig
 from geometry.geometry import Geometry
 from geometry.rectangle import RectangleGeometry
 
-class Note(MovementRig):
-    def __init__(self, x=0.0, y=0.0, z=0.0, radius=1.0, res=25, texture="", r=1.0, g=1.0, b=1.0, spawn_time=0):
-        # geometry
-        position_data, uv_data = Note.makeCircleAndUvs(0.0, 0.0, 0.0, radius, res)
-        geometry = Geometry()
-        geometry.add_attribute("vec3", "vertexPosition", position_data)
-        geometry.add_attribute("vec2", "vertexUV", uv_data)
-
-        # color (if no texture)
-        color_data = Note.fillColor(r, g, b, res * 3)
-        geometry.add_attribute("vec3", "vertexColor", color_data)
+class UI(MovementRig):
+    def __init__(self):
+        perfect_line: MovementRig = self.create_perfect_line()
 
         # texture
-        if texture == "":
-            material = SurfaceMaterial(property_dict={"useVertexColors": True})
-        else:
-            material = TextureMaterial(texture=Texture(texture))
-
-        self.mesh = Mesh(geometry, material)
         super().__init__()
-        self.add(self.mesh)
-        self.set_position([x, y, z])
-        self.spawn_time = spawn_time
+        self.add(perfect_line)
+        self.set_position([0, 0, 0])
+
+    def create_perfect_line(self):
+        geometry = RectangleGeometry(3.5, 0.05);
+        color_data = UI.fillColor(0.9, 0.9, 0.9, geometry.vertex_count)
+        geometry.add_attribute("vec3", "vertexColor", color_data)
+        material = SurfaceMaterial(property_dict={"useVertexColors": True})
+        mesh = Mesh(geometry, material)
+        rig = MovementRig()
+        rig.add(mesh)
+        rig.set_position([0.0, -1.3, 3.0])
+        return rig
+
 
     @staticmethod
     def fillColor(r, g, b, n):
@@ -106,10 +103,3 @@ class Note(MovementRig):
             curr_angle += angle
 
         return curr_points
-
-    @staticmethod
-    def makeNormalData(n):
-        data = []
-        for i in range(n):
-            data.append([0, 0, 1])
-        return data
