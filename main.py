@@ -20,7 +20,7 @@ from material.flat import FlatMaterial
 from material.lambert import LambertMaterial
 from material.phong import PhongMaterial
 from material.basic import BasicMaterial
-from circle import Circle
+from note import Note
 
 
 class Example(Base):
@@ -102,17 +102,19 @@ class Example(Base):
         self.scene.add(sphere_center_bottom)
         self.scene.add(sphere_right_bottom)
 
-
-        # testing
-        circle = Circle(x=2.0, y=1.5, z=3.0, radius=0.1, res=25, r=1.0, g=0.0, b=1.0)
-
-        self.scene.add(circle)
+        circle1 = Note(x=-1.0, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note1.png", r=0.9, g=0.0, b=0.0)
+        circle2 = Note(x=0.0, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note2.png", r=0.9, g=0.0, b=0.0)
+        circle3 = Note(x=1.0, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note3.png", r=0.9, g=0.0, b=0.0)
+        self.scene.add(circle1)
+        self.scene.add(circle2)
+        self.scene.add(circle3)
 
 
 
 
     def update(self):
         speed = -0.01
+        # print(self.delta_time)
         # self.circle_rig.translate(0, speed, 0)
         # self.rig.rotate_y(math.pi * speed * self.delta_time, False);
         # self.rig.update(self.input, self.delta_time)
