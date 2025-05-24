@@ -8,15 +8,31 @@ from geometry.geometry import Geometry
 from geometry.rectangle import RectangleGeometry
 
 class UI(MovementRig):
-    def __init__(self):
-        perfect_line: MovementRig = self.create_perfect_line()
+    DEBUG = False
 
-        # texture
+    PERFECT_POS = -1.30
+    PERFECT_RANGE = 0.05
+    GOOD_RANGE = 0.15
+    OK_RANGE = 0.30
+
+    def __init__(self):
+        perfect_line: MovementRig = self.create_perfect_line(self.PERFECT_POS)
+        perfect_range0, perfect_range1 = self.create_range(self.PERFECT_POS, self.PERFECT_RANGE)
+        good_range0, good_range1 = self.create_range(self.PERFECT_POS, self.GOOD_RANGE)
+        ok_range0, ok_range1 = self.create_range(self.PERFECT_POS, self.OK_RANGE)
+
         super().__init__()
         self.add(perfect_line)
+        if (self.DEBUG):
+            self.add(perfect_range0)
+            self.add(perfect_range1)
+            self.add(good_range0)
+            self.add(good_range1)
+            self.add(ok_range0)
+            self.add(ok_range1)
         self.set_position([0, 0, 0])
 
-    def create_perfect_line(self):
+    def create_perfect_line(self, pos):
         geometry = RectangleGeometry(3.5, 0.05);
         color_data = UI.fillColor(0.9, 0.9, 0.9, geometry.vertex_count)
         geometry.add_attribute("vec3", "vertexColor", color_data)
@@ -24,8 +40,23 @@ class UI(MovementRig):
         mesh = Mesh(geometry, material)
         rig = MovementRig()
         rig.add(mesh)
-        rig.set_position([0.0, -1.3, 3.0])
+        rig.set_position([0.0, pos, 3.0])
         return rig
+
+    def create_range(self, pos, range):
+        geometry = RectangleGeometry(3.5, 0.01);
+        color_data = UI.fillColor(0.7, 0.7, 0.7, geometry.vertex_count)
+        geometry.add_attribute("vec3", "vertexColor", color_data)
+        material = SurfaceMaterial(property_dict={"useVertexColors": True})
+        mesh = Mesh(geometry, material)
+        mesh2 = Mesh(geometry, material)
+        rig = MovementRig()
+        rig.add(mesh)
+        rig.set_position([0.0, pos - range, 3.0])
+        rig2 = MovementRig()
+        rig2.add(mesh2)
+        rig2.set_position([0.0, pos + range, 3.0])
+        return rig, rig2
 
 
     @staticmethod

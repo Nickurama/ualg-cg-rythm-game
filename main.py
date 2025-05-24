@@ -119,13 +119,14 @@ class Example(Base):
         self.ui = UI()
         self.scene.add(self.ui)
 
-        # self.bm_player = BmPlayer("beatmaps/beatmap.bm", self.scene)
-        self.bm_player = BmPlayer("beatmaps/beatmap_rainbow.bm", self.scene)
+        self.bm_player = BmPlayer("beatmaps/beatmap_slow.bm", self.scene)
+        # self.bm_player = BmPlayer("beatmaps/beatmap_rainbow.bm", self.scene)
         self.bm_player.start(time.perf_counter_ns())
 
     def update(self):
         curr_time_ns = time.perf_counter_ns()
-        self.bm_player.update(curr_time_ns)
+        # self.rig.update(self.input, self.delta_time)
+        self.bm_player.update(curr_time_ns, self.input)
         self.renderer.render(self.scene, self.camera)
 
 # Instantiate this class and run the program

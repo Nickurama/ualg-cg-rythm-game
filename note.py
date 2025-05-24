@@ -8,7 +8,8 @@ from geometry.geometry import Geometry
 from geometry.rectangle import RectangleGeometry
 
 class Note(MovementRig):
-    def __init__(self, x=0.0, y=0.0, z=0.0, radius=1.0, res=25, texture="", r=1.0, g=1.0, b=1.0, spawn_time=0):
+    def __init__(self, x=0.0, y=0.0, z=0.0, radius=1.0, res=25, texture="",
+                 r=1.0, g=1.0, b=1.0, spawn_time=0, lane=0):
         # geometry
         position_data, uv_data = Note.makeCircleAndUvs(0.0, 0.0, 0.0, radius, res)
         geometry = Geometry()
@@ -31,6 +32,21 @@ class Note(MovementRig):
         self.set_position([x, y, z])
         self.spawn_time = spawn_time
         self.has_reached_perfect_line = False
+        self.lane = lane
+
+    def is_within_range(self, pos, range):
+        y = self.local_position[1]
+
+        if y > (pos + range):
+            return False
+        if y < (pos - range):
+            return False
+        return True
+
+    def is_below_range(self, pos, range):
+        y = self.local_position[1]
+
+        return y < (pos - range)
 
     @staticmethod
     def fillColor(r, g, b, n):

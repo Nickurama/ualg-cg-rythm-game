@@ -1,0 +1,9 @@
+total_time_s: 120
+speed_ms: 3000
+song_file: "song.mp3"
+
+time_m,time_s,time_ms,pos
+0,3,000,0
+0,4,000,1
+0,5,000,2
+0,6,000,3
