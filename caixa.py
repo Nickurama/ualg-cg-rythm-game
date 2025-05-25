@@ -34,52 +34,52 @@ class Caixa(Object3D):
         )
 
         main_cylinder_geometry = FileGeometry(file="./objects/caixa/main_cylinder.obj")
-        self.mesh_main_cylinder = Mesh(geometry=main_cylinder_geometry, material=wood_dark_material)
-        self.add(self.mesh_main_cylinder)
+        self.main_cylinder = Mesh(geometry=main_cylinder_geometry, material=wood_dark_material)
+        self.add(self.main_cylinder)
 
         cylinder_0 = FileGeometry(file="./objects/caixa/cylinder_0.obj")
-        self.mesh_cylinder_0 = Mesh(geometry=cylinder_0, material=iron_material)
-        self.add(self.mesh_cylinder_0)
+        self.cylinder_0 = Mesh(geometry=cylinder_0, material=iron_material)
+        self.add(self.cylinder_0)
 
         cylinder_1 = FileGeometry(file="./objects/caixa/cylinder_1.obj")
-        self.mesh_cylinder_1 = Mesh(geometry=cylinder_1, material=iron_material)
-        self.add(self.mesh_cylinder_1)
+        self.cylinder_1 = Mesh(geometry=cylinder_1, material=iron_material)
+        self.add(self.cylinder_1)
 
         cylinder_2 = FileGeometry(file="./objects/caixa/cylinder_2.obj")
-        self.mesh_cylinder_2 = Mesh(geometry=cylinder_2, material=iron_material)
-        self.add(self.mesh_cylinder_2)
+        self.cylinder_2 = Mesh(geometry=cylinder_2, material=iron_material)
+        self.add(self.cylinder_2)
 
         cylinder_3 = FileGeometry(file="./objects/caixa/cylinder_3.obj")
-        self.mesh_cylinder_3 = Mesh(geometry=cylinder_3, material=iron_material)
-        self.add(self.mesh_cylinder_3)
+        self.cylinder_3 = Mesh(geometry=cylinder_3, material=iron_material)
+        self.add(self.cylinder_3)
 
         cylinder_4 = FileGeometry(file="./objects/caixa/cylinder_4.obj")
-        self.mesh_cylinder_4 = Mesh(geometry=cylinder_4, material=iron_material)
-        self.add(self.mesh_cylinder_4)
+        self.cylinder_4 = Mesh(geometry=cylinder_4, material=iron_material)
+        self.add(self.cylinder_4)
 
         cylinder_5 = FileGeometry(file="./objects/caixa/cylinder_5.obj")
-        self.mesh_cylinder_5 = Mesh(geometry=cylinder_5, material=iron_material)
-        self.add(self.mesh_cylinder_5)
+        self.cylinder_5 = Mesh(geometry=cylinder_5, material=iron_material)
+        self.add(self.cylinder_5)
 
         cylinder_6 = FileGeometry(file="./objects/caixa/cylinder_6.obj")
-        self.mesh_cylinder_6 = Mesh(geometry=cylinder_6, material=iron_material)
-        self.add(self.mesh_cylinder_6)
+        self.cylinder_6 = Mesh(geometry=cylinder_6, material=iron_material)
+        self.add(self.cylinder_6)
 
         cylinder_7 = FileGeometry(file="./objects/caixa/cylinder_7.obj")
-        self.mesh_cylinder_7 = Mesh(geometry=cylinder_7, material=iron_material)
-        self.add(self.mesh_cylinder_7)
+        self.cylinder_7 = Mesh(geometry=cylinder_7, material=iron_material)
+        self.add(self.cylinder_7)
 
         stick_0 = FileGeometry(file="./objects/caixa/stick_0.obj")
-        self.mesh_stick_0 = Mesh(geometry=stick_0, material=wood_material)
-        self.add(self.mesh_stick_0)
+        self.stick_0 = Mesh(geometry=stick_0, material=wood_material)
+        self.add(self.stick_0)
 
         stick_1 = FileGeometry(file="./objects/caixa/stick_1.obj")
-        self.mesh_stick_1 = Mesh(geometry=stick_1, material=wood_material)
-        self.add(self.mesh_stick_1)
+        self.stick_1 = Mesh(geometry=stick_1, material=wood_material)
+        self.add(self.stick_1)
 
         skin = FileGeometry(file="./objects/caixa/skin.obj")
-        self.mesh_skin = Mesh(geometry=skin, material=skin_material)
-        self.add(self.mesh_skin)
+        self.skin = Mesh(geometry=skin, material=skin_material)
+        self.add(self.skin)
 
     def update(self, delta_t_ms):
         delta_t_ms = delta_t_ms
