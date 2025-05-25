@@ -19,6 +19,12 @@ class Geometry:
     def vertex_count(self):
         return self._vertex_count
 
+    def count_vertices(self):
+        # Number of vertices may be calculated from the length of
+        # any Attribute object's array of data
+        attribute = list(self._attribute_dict.values())[0]
+        self._vertex_count = len(attribute.data)
+        
     def add_attribute(self, data_type, variable_name, data):
         attribute = Attribute(data_type, data)
         self._attribute_dict[variable_name] = attribute

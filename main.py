@@ -17,6 +17,7 @@ from extras.movement_rig import MovementRig
 from geometry.sphere import SphereGeometry
 from geometry.rectangle import RectangleGeometry
 from geometry.geometry import Geometry
+from geometry.recital import *
 from light.ambient import AmbientLight
 from light.directional import DirectionalLight
 from light.point import PointLight
@@ -46,80 +47,40 @@ class Example(Base):
 
 
         # Lighting
-        ambient_light = AmbientLight(color=[0.01, 0.01, 0.01])
-        directional_light = DirectionalLight(color=[1.0, 1.0, 1.0], direction=[-1, -1, -2])
-        point_light1 = PointLight(color=[0.1, 0, 0], position=[4, 0, 0])
-        point_light2 = PointLight(color=[0, 0.1, 0], position=[-4, 0, 0])
+        ambient_light = AmbientLight(color=[0.1, 0.1, 0.1])
         self.scene.add(ambient_light)
-        self.scene.add(directional_light)
-        self.scene.add(point_light1)
-        self.scene.add(point_light2)
+        self.directional_light = DirectionalLight(color=[0, 0, 0], direction=[-3, -4, 0])
+        self.directional_light.set_position([3, 4, 0])
+        self.scene.add(self.directional_light)
 
-        basecolor_material = BasicMaterial()
+        # scenario
 
-        # lighted materials with a color
-        flat_material = FlatMaterial(
-            property_dict={"baseColor": [0.2, 0.5, 0.5]},
-            number_of_light_sources=4
+        # cadeiras
+        cadeiras_geometry = recital_cadeiras()
+        cadeiras_material = PhongMaterial(
+            texture=Texture(file_name="images/crate.jpg"),
+            number_of_light_sources=2,
+            use_shadow=True
         )
-        lambert_material = LambertMaterial(
-            property_dict={"baseColor": [0.2, 0.5, 0.5]},
-            number_of_light_sources=4
+        cadeiras = Mesh(cadeiras_geometry, cadeiras_material)
+        cadeiras.rotate_y(math.pi, False)
+        cadeiras.set_position([0, -3, -20])
+        self.scene.add(cadeiras)
+        # chão
+        chao_geometry = recital_chao()
+        chao_material = PhongMaterial(
+            texture=Texture(file_name="images/grass.jpg"),
+            number_of_light_sources=2,
+            use_shadow=True
         )
-        phong_material = PhongMaterial(
-            property_dict={"baseColor": [0.2, 0.5, 0.5]},
-            number_of_light_sources=4
-        )
+        chao = Mesh(chao_geometry, chao_material)
+        chao.set_position([0, -3, -15])
+        self.scene.add(chao)
 
 
-        # lighted spheres with a color
-        sphere_geometry = SphereGeometry()
-        sphere_left_top = Mesh(sphere_geometry, flat_material)
-        sphere_left_top.set_position([-2.5, 1.5, 0])
-        sphere_center_top = Mesh(sphere_geometry, lambert_material)
-        sphere_center_top.set_position([0, 1.5, 0])
-        sphere_right_top = Mesh(sphere_geometry, phong_material)
-        sphere_right_top.set_position([2.5, 1.5, 0])
-
-        # lighted materials with a texture
-        textured_flat_material = FlatMaterial(
-            texture=Texture("images/grid.jpg"),
-            number_of_light_sources=4
-        )
-        textured_lambert_material = LambertMaterial(
-            texture=Texture("images/grid.jpg"),
-            number_of_light_sources=4
-        )
-        textured_phong_material = PhongMaterial(
-            texture=Texture("images/grid.jpg"),
-            number_of_light_sources=4
-        )
+        self.renderer.enable_shadows(self.directional_light)
 
 
-        # lighted spheres with a texture
-        sphere_left_bottom = Mesh(sphere_geometry, textured_flat_material)
-        sphere_left_bottom.set_position([-2.5, -1.5, 0])
-        sphere_center_bottom = Mesh(sphere_geometry, textured_lambert_material)
-        sphere_center_bottom.set_position([0, -1.5, 0])
-        sphere_right_bottom = Mesh(sphere_geometry, textured_phong_material)
-        sphere_right_bottom.set_position([2.5, -1.5, 0])
-
-        self.scene.add(sphere_left_top)
-        self.scene.add(sphere_center_top)
-        self.scene.add(sphere_right_top)
-        self.scene.add(sphere_left_bottom)
-        self.scene.add(sphere_center_bottom)
-        self.scene.add(sphere_right_bottom)
-
-
-        # circle1 = Note(x=-1.2, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note1.png", r=0.1, g=0.0, b=0.0)
-        # circle2 = Note(x=-0.4, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note2.png", r=0.1, g=0.0, b=0.0)
-        # circle3 = Note(x= 0.4, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note3.png", r=0.1, g=0.0, b=0.0)
-        # circle4 = Note(x= 1.2, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note1.png", r=0.1, g=0.0, b=0.0)
-        # self.scene.add(circle1)
-        # self.scene.add(circle2)
-        # self.scene.add(circle3)
-        # self.scene.add(circle4)
 
         self.bm_player = BmPlayer("beatmaps/recital.bm", self.scene)
         self.game_ui = UI()
