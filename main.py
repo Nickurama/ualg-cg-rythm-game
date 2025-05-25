@@ -124,9 +124,7 @@ class Example(Base):
         self.menu_ui = MenuUI()
         self.highscore_ui = HighscoreUI()
 
-        self.scene.add(self.menu_ui)
-        # self.scene.add(self.game_ui)
-        # self.scene.add(self.highscore_ui)
+        # self.scene.add(self.menu_ui)
 
 
         self.last_time_ns = time.perf_counter_ns()
@@ -135,11 +133,17 @@ class Example(Base):
         self.ms_seconds_counter = 0
         self.fps = 0
 
+        # self.after_clock_ms = -1
+        # self.update_main_menu = True
+        # self.beatmap_ended = False
+        # self.close_game_ui = False
+        # self.update_highscore = False
         self.after_clock_ms = -1
-        self.update_main_menu = True
+        self.update_main_menu = False
         self.beatmap_ended = False
         self.close_game_ui = False
-        self.update_highscore = False
+        self.update_highscore = True
+        self.scene.add(self.highscore_ui)
 
     def update(self):
         # metrics

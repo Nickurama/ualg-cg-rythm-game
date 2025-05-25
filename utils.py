@@ -13,6 +13,12 @@ class Utils:
         return collide_x and collide_y
 
     @staticmethod
+    def percentToRelative(coord):
+        rel_x = coord[0] * 2 * Utils.MAX_X - Utils.MAX_X
+        rel_y = coord[1] * 2 * Utils.MAX_Y - Utils.MAX_Y
+        return [rel_x, rel_y]
+
+    @staticmethod
     def toPixels(coord):
         normalized_x = (coord[0] + Utils.MAX_X) / (2 * Utils.MAX_X)
         normalized_y = (coord[1] + Utils.MAX_Y) / (2 * Utils.MAX_Y)

@@ -14,6 +14,8 @@ class Text(Object3D):
         self.x = x
         self.y = y
         self.align_right = align_right
+        self.width = 0
+        self.height = size
 
         self.update(text)
 
@@ -25,7 +27,7 @@ class Text(Object3D):
         self._children_list = []
 
         counter = 0
-        self.total_size = 0
+        self.width = 0
         for char in str(text):
             geometry = RectangleGeometry(self.size, self.size);
             material = TextureMaterial(texture=Texture(f"images/font/font_{char}.png"))
@@ -33,10 +35,10 @@ class Text(Object3D):
             mesh.set_position([(self.size / 2.0) + counter * self.padding * self.size, -self.size / 2.0, 0.0])
             counter += 1
             self.add(mesh)
-        self.total_size += counter * self.size * self.padding
+        self.width += counter * self.size * self.padding
         if self.align_right:
-            self.set_position([self.x - self.total_size, self.y, 3.0])
+            self.set_position([self.x - self.width, self.y, 3.0])
         elif self.centered:
-            self.set_position([self.x - self.total_size / 2, self.y + self.size / 2, 3.0])
+            self.set_position([self.x - self.width / 2, self.y + self.size / 2, 3.0])
         else:
             self.set_position([self.x, self.y, 3.0])
