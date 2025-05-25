@@ -124,10 +124,32 @@ class Example(Base):
         # self.bm_player = BmPlayer("beatmaps/beatmap_rainbow.bm", self.scene)
         self.bm_player.start(time.perf_counter_ns())
 
+        self.last_time_ns = time.perf_counter_ns()
+        self.fps_sum = 0
+        self.fps_count = 0
+        self.ms_seconds_counter = 0
+        self.fps = 0
+
     def update(self):
         curr_time_ns = time.perf_counter_ns()
-        # self.rig.update(self.input, self.delta_time)
+        delta_t_ms = int((curr_time_ns - self.last_time_ns) / 1000000)
+        curr_fps = 0
+        if (delta_t_ms != 0):
+            curr_fps = int(1000 / delta_t_ms)
+        self.fps_sum += curr_fps
+        self.fps_count += 1
+        self.ms_seconds_counter += delta_t_ms
+        self.last_time_ns = curr_time_ns
+
+        if (self.ms_seconds_counter >= 1000):
+            self.fps = int(self.fps_sum / self.fps_count)
+            self.fps_sum = 0
+            self.fps_count = 0
+            self.ms_seconds_counter = 0
+
+
         self.bm_player.update(curr_time_ns, self.input)
+        self.ui.update(self.fps, self.scene)
         self.renderer.render(self.scene, self.camera)
 
 # Instantiate this class and run the program

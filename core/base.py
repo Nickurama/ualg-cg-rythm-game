@@ -74,7 +74,7 @@ class Base:
             # Display image on screen
             pygame.display.flip()
             # Pause if necessary to achieve 60 FPS
-            self._clock.tick(60)
+            self._clock.tick(240)
         # Shutdown #
         pygame.quit()
         sys.exit()

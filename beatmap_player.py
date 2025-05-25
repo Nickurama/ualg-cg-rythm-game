@@ -90,12 +90,7 @@ class BmPlayer:
             return
 
         elapsed_ms = int((curr_time_ns - self.start_time_ns) / 1000000)
-        delta_t_ms = int((curr_time_ns - self.last_time_ns) / 1000000)
-        curr_fps = 0
-        if (delta_t_ms != 0):
-            curr_fps = int(1000 / delta_t_ms)
 
-        # print(curr_fps)
         self.capture_input(input_obj)
         self.spawn_notes(elapsed_ms)
         self.update_notes(elapsed_ms)
