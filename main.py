@@ -99,12 +99,12 @@ class Example(Base):
         sphere_right_bottom = Mesh(sphere_geometry, textured_phong_material)
         sphere_right_bottom.set_position([2.5, -1.5, 0])
 
-        self.scene.add(sphere_left_top)
-        self.scene.add(sphere_center_top)
-        self.scene.add(sphere_right_top)
-        self.scene.add(sphere_left_bottom)
-        self.scene.add(sphere_center_bottom)
-        self.scene.add(sphere_right_bottom)
+        # self.scene.add(sphere_left_top)
+        # self.scene.add(sphere_center_top)
+        # self.scene.add(sphere_right_top)
+        # self.scene.add(sphere_left_bottom)
+        # self.scene.add(sphere_center_bottom)
+        # self.scene.add(sphere_right_bottom)
 
 
         # circle1 = Note(x=-1.2, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note1.png", r=0.1, g=0.0, b=0.0)
@@ -119,8 +119,8 @@ class Example(Base):
         self.ui = UI()
         self.scene.add(self.ui)
 
+        # self.bm_player = BmPlayer("beatmaps/beatmap.bm", self.scene)
         self.bm_player = BmPlayer("beatmaps/beatmap_rainbow.bm", self.scene)
-        # self.bm_player = BmPlayer("beatmaps/beatmap_rainbow.bm", self.scene)
         self.bm_player.start(time.perf_counter_ns())
 
     def update(self):

@@ -35,7 +35,7 @@ class BmPlayer:
     POSY_PERFECT = -1.3
     POSZ = 3.0
     RADIUS = 0.5
-    RESOLUTION = 25
+    RESOLUTION = 8
     DEFAULT_R = 1.0
     DEFAULT_G = 1.0
     DEFAULT_B = 1.0
@@ -94,7 +94,7 @@ class BmPlayer:
         if (delta_t_ms != 0):
             curr_fps = int(1000 / delta_t_ms)
 
-        # print(elapsed_ms)
+        print(curr_fps)
         self.capture_input(input_obj)
         self.spawn_notes(elapsed_ms)
         self.update_notes(elapsed_ms)
@@ -174,7 +174,6 @@ class BmPlayer:
         self.notes_remove_queue = []
 
     def check_end_condition(self):
-        print(len(self.spawned_notes))
         if (self.curr_note >= len(self.notes_data) and len(self.spawned_notes) == 0):
             print("beatmap has reached the end")
             self.started = False
@@ -235,8 +234,8 @@ class BmPlayer:
                 self.score += self.SCORE_OK * self.combo * self.COMBO_MULTIPLIER
                 print(f"combo: {self.combo}")
                 print(f"score: {self.score}")
-            else:
-                self.miss(note)
+            # else:
+            #     self.miss(note)
         
 
     def miss(self, note):

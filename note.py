@@ -17,14 +17,14 @@ class Note(MovementRig):
         geometry.add_attribute("vec2", "vertexUV", uv_data)
 
         # color (if no texture)
-        color_data = Note.fillColor(r, g, b, res * 3)
-        geometry.add_attribute("vec3", "vertexColor", color_data)
+        # color_data = Note.fillColor(r, g, b, res * 3)
+        # geometry.add_attribute("vec3", "vertexColor", color_data)
 
         # texture
-        if texture == "":
-            material = SurfaceMaterial(property_dict={"useVertexColors": True})
-        else:
-            material = TextureMaterial(texture=Texture(texture))
+        # if texture == "":
+        #     material = SurfaceMaterial(property_dict={"useVertexColors": True})
+        # else:
+        material = TextureMaterial(texture=Texture(texture))
 
         self.mesh = Mesh(geometry, material)
         super().__init__()
