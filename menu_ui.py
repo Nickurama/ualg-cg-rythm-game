@@ -48,15 +48,12 @@ class MenuUI(Object3D):
         return mesh
 
     def clicked_play(self, mouse_pos):
-        rel_pos = Utils.toRelative(mouse_pos)
-        rel_mouse_x = rel_pos[0]
-        rel_mouse_y = rel_pos[1]
-        collide_x = self.PLAY_X - self.PLAY_BTN_W / 2.0 <= rel_mouse_x and self.PLAY_X + self.PLAY_BTN_W / 2.0 >= rel_mouse_x
-        collide_y = self.PLAY_Y - self.PLAY_BTN_H / 2.0 <= rel_mouse_y and self.PLAY_Y + self.PLAY_BTN_H / 2.0 >= rel_mouse_y
+        rel_mouse_pos = Utils.toRelative(mouse_pos)
+        rel_btn_center = [self.PLAY_X, self.PLAY_Y]
+        return Utils.collides_rectangle(rel_mouse_pos, rel_btn_center, self.PLAY_BTN_W, self.PLAY_BTN_H)
         # g = self.create_play_button(self.PLAY_X - self.PLAY_BTN_W / 2.0 - 0.01, self.PLAY_Y, 0.01, 0.01)
         # g = self.create_play_button(rel_pos[0], rel_pos[1], 0.01, 0.01)
         # self.add(g)
-        return collide_x and collide_y
 
     def update(self, input):
         if input.is_mouse_left_down():

@@ -9,7 +9,7 @@ from geometry.rectangle import RectangleGeometry
 
 class HighscoreUI(Object3D):
     def __init__(self):
-        self = self
+        super().__init__()
 
     def update(self):
         return False

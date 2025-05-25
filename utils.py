@@ -7,6 +7,12 @@ class Utils:
     PIXELS_Y = 900
 
     @staticmethod
+    def collides_rectangle(point, center, width, height):
+        collide_x = center[0] - (width / 2.0) <= point[0] and center[0] + (width / 2.0) >= point[0]
+        collide_y = center[1] - (height / 2.0) <= point[1] and center[1] + (height / 2.0) >= point[1]
+        return collide_x and collide_y
+
+    @staticmethod
     def toPixels(coord):
         normalized_x = (coord[0] + Utils.MAX_X) / (2 * Utils.MAX_X)
         normalized_y = (coord[1] + Utils.MAX_Y) / (2 * Utils.MAX_Y)
