@@ -17,6 +17,7 @@ from extras.movement_rig import MovementRig
 from geometry.sphere import SphereGeometry
 from geometry.rectangle import RectangleGeometry
 from geometry.geometry import Geometry
+from geometry.box import BoxGeometry
 from light.ambient import AmbientLight
 from light.directional import DirectionalLight
 from light.point import PointLight
@@ -31,6 +32,7 @@ from menu_ui import MenuUI
 from highscore_ui import HighscoreUI
 from text import Text
 from utils import Utils
+from caixa import Caixa
 
 
 class Example(Base):
@@ -101,15 +103,21 @@ class Example(Base):
         sphere_left_bottom.set_position([-2.5, -1.5, 0])
         sphere_center_bottom = Mesh(sphere_geometry, textured_lambert_material)
         sphere_center_bottom.set_position([0, -1.5, 0])
-        sphere_right_bottom = Mesh(sphere_geometry, textured_phong_material)
-        sphere_right_bottom.set_position([2.5, -1.5, 0])
+        # sphere_right_bottom = Mesh(sphere_geometry, textured_phong_material)
+        # sphere_right_bottom.set_position([2.5, -1.5, 0])
 
         self.scene.add(sphere_left_top)
         self.scene.add(sphere_center_top)
         self.scene.add(sphere_right_top)
         self.scene.add(sphere_left_bottom)
         self.scene.add(sphere_center_bottom)
-        self.scene.add(sphere_right_bottom)
+
+        # box = Mesh(BoxGeometry(), textured_flat_material)
+        # box.set_position([2.5, -1.5, 0])
+        # self.scene.add(box)
+        caixa = Caixa(light_sources=4)
+        caixa.set_position([2.5, -1.5, 0])
+        self.scene.add(caixa)
 
 
         # circle1 = Note(x=-1.2, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note1.png", r=0.1, g=0.0, b=0.0)
