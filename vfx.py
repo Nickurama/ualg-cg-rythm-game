@@ -9,11 +9,13 @@ class VFX:
     PERFECT_VFX_FILE = "images/perfect_vfx.png"
     GOOD_VFX_FILE = "images/good_vfx.png"
     OK_VFX_FILE = "images/ok_vfx.png"
-    MISS_VFX_FILE = "images/miss_vfx.png"
+    # MISS_VFX_FILE = "images/miss_vfx.png"
+    MISS_VFX_FILE = "images/miss.png"
     VFX_LINGER_TIME_MS = 300
 
     def __init__(self, width, height, scene: Scene):
         self.geometry = RectangleGeometry(width, height);
+        self.tiny_geometry = RectangleGeometry(width * 0.5, height * 0.15)
         self.width = width
         self.height = height
         self.scene = scene
@@ -63,7 +65,7 @@ class VFX:
 
     def create_miss_vfx(self, x, y):
         texture = TextureMaterial(texture=Texture(self.MISS_VFX_FILE))
-        mesh = Mesh(self.geometry, texture)
-        mesh.set_position([x, y, 3.0])
+        mesh = Mesh(self.tiny_geometry, texture)
+        mesh.set_position([x, y, 4.0])
         self.scene.add(mesh)
         self.vfx_list.append([mesh, self.VFX_LINGER_TIME_MS, texture])

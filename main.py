@@ -121,7 +121,7 @@ class Example(Base):
         # self.scene.add(circle3)
         # self.scene.add(circle4)
 
-        self.bm_player = BmPlayer("beatmaps/beatmap.bm", self.scene)
+        self.bm_player = BmPlayer("beatmaps/recital.bm", self.scene)
         self.game_ui = UI()
         self.menu_ui = MenuUI()
         self.highscore_ui = HighscoreUI(0)

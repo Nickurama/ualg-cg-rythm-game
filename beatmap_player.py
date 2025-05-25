@@ -6,6 +6,7 @@ import math
 from note import Note
 from core_ext.scene import Scene
 from vfx import VFX
+from utils import Utils
 
 class BmPlayer:
     IMG_POOL = [
@@ -272,7 +273,8 @@ class BmPlayer:
             return
         note.missed = True
         # print("miss!")
-        self.vfx.create_miss_vfx(self.lane_to_coords(note.lane), self.POSY_PERFECT + self.vfx.height / 2)
+        # self.vfx.create_miss_vfx(self.lane_to_coords(note.lane), self.POSY_PERFECT + self.vfx.height / 2)
+        self.vfx.create_miss_vfx(0.0, Utils.percentToRelative([0, 0.7])[1])
         if self.combo > self.MISS_SOUND_COMBO_THRESHOLD:
             self.play_miss_sound()
         self.combo = 0
