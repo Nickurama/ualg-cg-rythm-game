@@ -68,7 +68,6 @@ class BmPlayer:
 
         self.notes_data = []
 
-        print(csv_data)
         index = 0
         for row in csv_data:
             if (index == 0):
@@ -82,8 +81,6 @@ class BmPlayer:
 
             total_ms = time_m * 60 * 1000 + time_s * 1000 + time_ms
             self.notes_data.append([total_ms, pos])
-
-        print("\n")
 
     def update(self, curr_time_ns, input_obj):
         if (not self.started):
@@ -106,7 +103,7 @@ class BmPlayer:
             note_pos = note[1]
             note_spawn_time_ms = note_ms - self.speed_ms
             if (note_spawn_time_ms < elapsed_ms):
-                print(f"Spawning note on {note_pos} at {elapsed_ms}")
+                # print(f"spawning note on {note_pos} at {elapsed_ms}")
                 self.spawn_note(note_pos, note_spawn_time_ms)
                 self.curr_note += 1
 
@@ -150,7 +147,7 @@ class BmPlayer:
             total_travel = abs(end_y - start_y)
             target_y = start_y - total_travel * target_y_ratio
             if (target_y_ratio > 1.0 and not note.has_reached_perfect_line):
-                print(f"note reached end at {elapsed_ms}")
+                # print(f"note reached end at {elapsed_ms}")
                 note.has_reached_perfect_line = True
             if note.is_below_range(self.POSY_PERFECT, self.OK_RANGE):
                 self.miss(note)
@@ -166,7 +163,7 @@ class BmPlayer:
             note: Note = nnote
             self.spawned_notes.remove(note)
             self.scene.remove(note)
-            print("despawning note")
+            # print("despawning note")
         self.notes_remove_queue = []
 
     def check_end_condition(self):
@@ -218,22 +215,22 @@ class BmPlayer:
                 self.score += self.calc_score(self.SCORE_PERFECT, self.combo)
                 self.combo += 1
                 print("perfect!")
-                print(f"combo: {self.combo}")
-                print(f"score: {self.score}")
+                # print(f"combo: {self.combo}")
+                # print(f"score: {self.score}")
             elif note.is_within_range(self.POSY_PERFECT, self.GOOD_RANGE):
                 self.remove_note(note)
                 self.score += self.calc_score(self.SCORE_GOOD, self.combo)
                 self.combo += 1
                 print("good!")
-                print(f"combo: {self.combo}")
-                print(f"score: {self.score}")
+                # print(f"combo: {self.combo}")
+                # print(f"score: {self.score}")
             elif note.is_within_range(self.POSY_PERFECT, self.OK_RANGE):
                 self.remove_note(note)
                 self.score += self.calc_score(self.SCORE_OK, self.combo)
                 self.combo += 1
                 print("ok!")
-                print(f"combo: {self.combo}")
-                print(f"score: {self.score}")
+                # print(f"combo: {self.combo}")
+                # print(f"score: {self.score}")
 
     def calc_score(self, hit_score, combo):
         return hit_score + hit_score * combo * self.COMBO_MULTIPLIER

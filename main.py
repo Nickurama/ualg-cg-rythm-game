@@ -149,7 +149,7 @@ class Example(Base):
 
 
         self.bm_player.update(curr_time_ns, self.input)
-        self.ui.update(self.fps, self.scene)
+        self.ui.update(self.fps, self.bm_player.combo, int(self.bm_player.score), self.scene)
         self.renderer.render(self.scene, self.camera)
 
 # Instantiate this class and run the program

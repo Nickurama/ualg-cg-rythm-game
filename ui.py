@@ -20,6 +20,21 @@ class UI(Object3D):
     POSX_2 = 0.4
     POSX_3 = 1.2
 
+    TEXT_PADDING = 0.8
+    TEXT_FPS_SIZE = 0.1
+    TEXT_COMBO_SIZE = 0.2
+    TEXT_SCORE_SIZE = 0.2
+
+    TEXT_COMBO = "x"
+    TEXT_SCORE = ""
+
+    TEXT_FPS_Y = 1.7
+    TEXT_FPS_X = 2.3
+    TEXT_COMBO_Y = -1.5
+    TEXT_COMBO_X = -2.3
+    TEXT_SCORE_Y = 1.7
+    TEXT_SCORE_X = -2.3
+
     def __init__(self):
         perfect_line = self.create_perfect_line(self.PERFECT_POS)
         perfect_range0, perfect_range1 = self.create_range(self.PERFECT_POS, self.PERFECT_RANGE)
@@ -43,6 +58,10 @@ class UI(Object3D):
 
         self.fps_counter = None
         self.last_fps = -1
+        self.combo_counter = None
+        self.last_combo = -1
+        self.score_counter = None
+        self.last_score = -1
 
     def create_perfect_line(self, pos):
         geometry = RectangleGeometry(3.1, 0.05);
@@ -77,22 +96,33 @@ class UI(Object3D):
         mesh2.set_position([(self.POSX_2 + self.POSX_3) / 2.0, 0.0, 3.0])
         return mesh0, mesh1, mesh2
 
-    def update(self, fps, scene):
-        if fps == self.last_fps:
-            return
-        self.last_fps = fps
-        if self.fps_counter != None:
-            scene.remove(self.fps_counter)
-        self.fps_counter = self.create_text_obj(fps)
-        scene.add(self.fps_counter)
+    def update(self, fps, combo, score, scene):
+        if fps != self.last_fps:
+            self.last_fps = fps
+            if self.fps_counter != None:
+                scene.remove(self.fps_counter)
+            fps_text = f"{fps}"
+            self.fps_counter = self.create_text_obj(fps_text, self.TEXT_PADDING, self.TEXT_FPS_SIZE, self.TEXT_FPS_X, self.TEXT_FPS_Y, True)
+            scene.add(self.fps_counter)
+        if combo != self.last_combo:
+            self.last_combo = combo
+            if self.combo_counter != None:
+                scene.remove(self.combo_counter)
+            combo_text = f"{combo}{self.TEXT_COMBO}"
+            self.combo_counter = self.create_text_obj(combo_text, self.TEXT_PADDING, self.TEXT_COMBO_SIZE, self.TEXT_COMBO_X, self.TEXT_COMBO_Y)
+            scene.add(self.combo_counter)
+        if score != self.last_score:
+            self.last_score = score
+            if self.score_counter != None:
+                scene.remove(self.score_counter)
+            score_text = f"{self.TEXT_SCORE}{score}"
+            self.score_counter = self.create_text_obj(score_text, self.TEXT_PADDING, self.TEXT_SCORE_SIZE, self.TEXT_SCORE_X, self.TEXT_SCORE_Y)
+            scene.add(self.score_counter)
 
-    def create_text_obj(self, text):
+    def create_text_obj(self, text, padding, size, x, y, align_right=False):
         text_obj = Object3D()
-        padding = 0.8
-        size = 0.1
         counter = 0
         total_size = 0
-        # for digit in [i for i in str(fps)]:
         for char in str(text):
             geometry = RectangleGeometry(size, size);
             material = TextureMaterial(texture=Texture(f"images/font/font_{char}.png"))
@@ -101,7 +131,10 @@ class UI(Object3D):
             counter += 1
             text_obj.add(mesh)
         total_size += counter * size * padding
-        text_obj.set_position([2.3 - total_size, 1.7, 3.0])
+        if align_right:
+            text_obj.set_position([x - total_size, y, 3.0])
+        else:
+            text_obj.set_position([x, y, 3.0])
         return text_obj
 
 
