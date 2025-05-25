@@ -26,6 +26,9 @@ from material.basic import BasicMaterial
 from note import Note
 from beatmap_player import BmPlayer
 from ui import UI
+from menu_ui import MenuUI
+from highscore_ui import HighscoreUI
+from text import Text
 
 
 class Example(Base):
@@ -116,8 +119,12 @@ class Example(Base):
         # self.scene.add(circle3)
         # self.scene.add(circle4)
 
-        self.ui = UI()
-        self.scene.add(self.ui)
+        self.game_ui = UI()
+        self.menu_ui = MenuUI()
+        # self.highscore_ui = HighscoreUI()
+        self.scene.add(self.game_ui)
+        self.scene.add(self.menu_ui)
+        # self.scene.add(self.highscore_ui)
 
         # self.bm_player = BmPlayer("beatmaps/beatmap.bm", self.scene)
         self.bm_player = BmPlayer("beatmaps/beatmap_slow.bm", self.scene)
@@ -131,6 +138,7 @@ class Example(Base):
         self.fps = 0
 
     def update(self):
+        # metrics
         curr_time_ns = time.perf_counter_ns()
         delta_t_ms = int((curr_time_ns - self.last_time_ns) / 1000000)
         curr_fps = 0
@@ -148,8 +156,12 @@ class Example(Base):
             self.ms_seconds_counter = 0
 
 
+        # main update loop
         self.bm_player.update(curr_time_ns, self.input)
-        self.ui.update(self.fps, self.bm_player.combo, int(self.bm_player.score), self.scene)
+        # if self.bm_player.started:
+        self.game_ui.update(self.fps, self.bm_player.combo, int(self.bm_player.score), self.scene)
+
+        # renderer
         self.renderer.render(self.scene, self.camera)
 
 # Instantiate this class and run the program

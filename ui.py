@@ -6,6 +6,8 @@ from core_ext.mesh import Mesh
 from core_ext.object3d import Object3D
 from geometry.geometry import Geometry
 from geometry.rectangle import RectangleGeometry
+from text import Text
+from utils import Utils
 
 class UI(Object3D):
     DEBUG = False
@@ -36,13 +38,19 @@ class UI(Object3D):
     TEXT_SCORE_X = -2.3
 
     def __init__(self):
+        super().__init__()
         perfect_line = self.create_perfect_line(self.PERFECT_POS)
         perfect_range0, perfect_range1 = self.create_range(self.PERFECT_POS, self.PERFECT_RANGE)
         good_range0, good_range1 = self.create_range(self.PERFECT_POS, self.GOOD_RANGE)
         ok_range0, ok_range1 = self.create_range(self.PERFECT_POS, self.OK_RANGE)
         lane0, lane1, lane2 = self.create_lanes()
+        self.fps_text = Text("", self.TEXT_PADDING, self.TEXT_FPS_SIZE, self.TEXT_FPS_X, self.TEXT_FPS_Y, True)
+        self.combo_text = Text("", self.TEXT_PADDING, self.TEXT_COMBO_SIZE, self.TEXT_COMBO_X, self.TEXT_COMBO_Y)
+        self.score_text = Text("", self.TEXT_PADDING, self.TEXT_SCORE_SIZE, self.TEXT_SCORE_X, self.TEXT_SCORE_Y)
 
-        super().__init__()
+        self.add(self.fps_text)
+        self.add(self.combo_text)
+        self.add(self.score_text)
         self.add(perfect_line)
         if (self.DEBUG):
             self.add(perfect_range0)
@@ -56,16 +64,10 @@ class UI(Object3D):
         self.add(lane2)
         self.set_position([0, 0, 0])
 
-        self.fps_counter = None
-        self.last_fps = -1
-        self.combo_counter = None
-        self.last_combo = -1
-        self.score_counter = None
-        self.last_score = -1
 
     def create_perfect_line(self, pos):
         geometry = RectangleGeometry(3.1, 0.05);
-        color_data = UI.fillColor(0.9, 0.9, 0.9, geometry.vertex_count)
+        color_data = Utils.fillColor(0.9, 0.9, 0.9, geometry.vertex_count)
         geometry.add_attribute("vec3", "vertexColor", color_data)
         material = SurfaceMaterial(property_dict={"useVertexColors": True})
         mesh = Mesh(geometry, material)
@@ -74,7 +76,7 @@ class UI(Object3D):
 
     def create_range(self, pos, range):
         geometry = RectangleGeometry(3.5, 0.01);
-        color_data = UI.fillColor(0.7, 0.7, 0.7, geometry.vertex_count)
+        color_data = Utils.fillColor(0.7, 0.7, 0.7, geometry.vertex_count)
         geometry.add_attribute("vec3", "vertexColor", color_data)
         material = SurfaceMaterial(property_dict={"useVertexColors": True})
         mesh = Mesh(geometry, material)
@@ -85,7 +87,7 @@ class UI(Object3D):
     
     def create_lanes(self):
         geometry = RectangleGeometry(0.005, 3.5);
-        color_data = UI.fillColor(0.7, 0.7, 0.7, geometry.vertex_count)
+        color_data = Utils.fillColor(0.7, 0.7, 0.7, geometry.vertex_count)
         geometry.add_attribute("vec3", "vertexColor", color_data)
         material = SurfaceMaterial(property_dict={"useVertexColors": True})
         mesh0 = Mesh(geometry, material)
@@ -97,27 +99,9 @@ class UI(Object3D):
         return mesh0, mesh1, mesh2
 
     def update(self, fps, combo, score, scene):
-        if fps != self.last_fps:
-            self.last_fps = fps
-            if self.fps_counter != None:
-                scene.remove(self.fps_counter)
-            fps_text = f"{fps}"
-            self.fps_counter = self.create_text_obj(fps_text, self.TEXT_PADDING, self.TEXT_FPS_SIZE, self.TEXT_FPS_X, self.TEXT_FPS_Y, True)
-            scene.add(self.fps_counter)
-        if combo != self.last_combo:
-            self.last_combo = combo
-            if self.combo_counter != None:
-                scene.remove(self.combo_counter)
-            combo_text = f"{combo}{self.TEXT_COMBO}"
-            self.combo_counter = self.create_text_obj(combo_text, self.TEXT_PADDING, self.TEXT_COMBO_SIZE, self.TEXT_COMBO_X, self.TEXT_COMBO_Y)
-            scene.add(self.combo_counter)
-        if score != self.last_score:
-            self.last_score = score
-            if self.score_counter != None:
-                scene.remove(self.score_counter)
-            score_text = f"{self.TEXT_SCORE}{score}"
-            self.score_counter = self.create_text_obj(score_text, self.TEXT_PADDING, self.TEXT_SCORE_SIZE, self.TEXT_SCORE_X, self.TEXT_SCORE_Y)
-            scene.add(self.score_counter)
+        self.fps_text.update(fps)
+        self.combo_text.update(f"{combo}{self.TEXT_COMBO}")
+        self.score_text.update(f"{self.TEXT_SCORE}{score}")
 
     def create_text_obj(self, text, padding, size, x, y, align_right=False):
         text_obj = Object3D()
@@ -136,80 +120,3 @@ class UI(Object3D):
         else:
             text_obj.set_position([x, y, 3.0])
         return text_obj
-
-
-    @staticmethod
-    def fillColor(r, g, b, n):
-        curr_colors = []
-        for i in range(n):
-            curr_colors.append([r, g, b])
-        return curr_colors
-
-    @staticmethod
-    def makeCircle(x, y, z, r, n):
-        angle = 2 * math.pi / n
-        curr_angle = 0.0;
-        curr_points = []
-        for i in range(n):
-            curr_x = x + r * math.cos(curr_angle)
-            curr_y = y + r * math.sin(curr_angle)
-            curr_z = z
-            curr_points.append([curr_x, curr_y, curr_z])
-            if i > 0:
-                curr_points.append([x, y, z])
-                curr_points.append([curr_x, curr_y, curr_z])
-            curr_angle += angle
-        curr_points.append(curr_points[0])
-        curr_points.append([x, y, z])
-
-        return curr_points
-
-    @staticmethod
-    def makeCircleAndUvs(x, y, z, r, n):
-        angle_step = 2 * math.pi / n
-        vertices = []
-        uvs = []
-
-        center_uv = [0.5, 0.5]
-        center_vert = [x, y, z]
-
-        for i in range(n):
-            angle = angle_step * i
-
-            # vertices
-            px = x + r * math.cos(angle)
-            py = y + r * math.sin(angle)
-            pz = z
-
-            # uvs
-            uv_x = 0.5 + 0.5 * math.cos(angle)
-            uv_y = 0.5 + 0.5 * math.sin(angle)
-
-            vertices.append([px, py, pz])
-            uvs.append([uv_x, uv_y])
-            if i > 0:
-                vertices.append(center_vert)
-                uvs.append(center_uv)
-                vertices.append([px, py, pz])
-                uvs.append([uv_x, uv_y])
-
-        vertices.append(vertices[0])
-        uvs.append(uvs[0])
-        vertices.append(center_vert)
-        uvs.append(center_uv)
-
-        return vertices, uvs
-
-    @staticmethod
-    def makeCircleRaw(x, y, z, r, n):
-        angle = 2 * math.pi / n
-        curr_angle = 0.0;
-        curr_points = []
-        for i in range(n):
-            curr_x = x + r * math.cos(curr_angle)
-            curr_y = y + r * math.sin(curr_angle)
-            curr_z = z
-            curr_points.append([curr_x, curr_y, curr_z])
-            curr_angle += angle
-
-        return curr_points
