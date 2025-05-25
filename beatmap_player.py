@@ -158,7 +158,7 @@ class BmPlayer:
                 note.has_reached_perfect_line = True
             if note.is_below_range(self.POSY_PERFECT, self.OK_RANGE):
                 self.miss(note)
-            elif (target_y_ratio > 1.3):
+            if (target_y_ratio > 1.3):
                 self.remove_note(note)
             note.set_position([note.local_position[0], target_y, note.local_position[2]]);
 
@@ -174,6 +174,7 @@ class BmPlayer:
         self.notes_remove_queue = []
 
     def check_end_condition(self):
+        print(len(self.spawned_notes))
         if (self.curr_note >= len(self.notes_data) and len(self.spawned_notes) == 0):
             print("beatmap has reached the end")
             self.started = False
@@ -239,9 +240,11 @@ class BmPlayer:
         
 
     def miss(self, note):
+        if note.missed:
+            return
+        note.missed = True
         print("miss!")
         self.combo = 0
-        self.remove_note(note)
 
     def start(self, start_time_ns):
         self.start_time_ns = start_time_ns

@@ -33,6 +33,7 @@ class Note(MovementRig):
         self.spawn_time = spawn_time
         self.has_reached_perfect_line = False
         self.lane = lane
+        self.missed = False
 
     def is_within_range(self, pos, range):
         y = self.local_position[1]
