@@ -11,9 +11,9 @@ class UI(MovementRig):
     DEBUG = False
 
     PERFECT_POS = -1.30
-    PERFECT_RANGE = 0.05
-    GOOD_RANGE = 0.15
-    OK_RANGE = 0.30
+    PERFECT_RANGE = 0.10
+    GOOD_RANGE = 0.20
+    OK_RANGE = 0.40
 
     def __init__(self):
         perfect_line: MovementRig = self.create_perfect_line(self.PERFECT_POS)

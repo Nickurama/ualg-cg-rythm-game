@@ -1,6 +1,6 @@
 total_time_s: 120
 speed_ms: 3000
-song_file: "song.mp3"
+song_file: "music/song.mp3"
 
 time_m,time_s,time_ms,pos
 0,3,000,0

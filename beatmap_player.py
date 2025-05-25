@@ -1,3 +1,4 @@
+import pygame
 import random
 import csv
 from io import StringIO
@@ -18,9 +19,9 @@ class BmPlayer:
 
     COMBO_MULTIPLIER = 0.1
 
-    PERFECT_RANGE = 0.05
-    GOOD_RANGE = 0.15
-    OK_RANGE = 0.30
+    PERFECT_RANGE = 0.10
+    GOOD_RANGE = 0.20
+    OK_RANGE = 0.40
 
     KEY_POS_0 = "d"
     KEY_POS_1 = "f"
@@ -177,6 +178,7 @@ class BmPlayer:
         if (self.curr_note >= len(self.notes_data) and len(self.spawned_notes) == 0):
             print("beatmap has reached the end")
             self.started = False
+            self.stop_song()
 
     def capture_input(self, input_obj):
         input_obj = input_obj
@@ -249,7 +251,16 @@ class BmPlayer:
         self.start_time_ns = start_time_ns
         self.started = True
         self.last_time_ns = start_time_ns
+        self.start_song()
 
+    def start_song(self):
+        pygame.mixer.init()
+        pygame.mixer.music.load(self.song_file)
+        pygame.mixer.music.set_volume(0.3)
+        pygame.mixer.music.play()
+
+    def stop_song(self):
+        pygame.mixer.music.stop()
 
     @staticmethod
     def parse_beatmap(file_path: str):
