@@ -3,6 +3,7 @@ import pathlib
 import sys
 import math
 import pygame
+import os
 import time
 
 from material.surface import SurfaceMaterial
@@ -26,6 +27,10 @@ from material.basic import BasicMaterial
 from note import Note
 from beatmap_player import BmPlayer
 from ui import UI
+from menu_ui import MenuUI
+from highscore_ui import HighscoreUI
+from text import Text
+from utils import Utils
 
 
 class Example(Base):
@@ -99,12 +104,12 @@ class Example(Base):
         sphere_right_bottom = Mesh(sphere_geometry, textured_phong_material)
         sphere_right_bottom.set_position([2.5, -1.5, 0])
 
-        # self.scene.add(sphere_left_top)
-        # self.scene.add(sphere_center_top)
-        # self.scene.add(sphere_right_top)
-        # self.scene.add(sphere_left_bottom)
-        # self.scene.add(sphere_center_bottom)
-        # self.scene.add(sphere_right_bottom)
+        self.scene.add(sphere_left_top)
+        self.scene.add(sphere_center_top)
+        self.scene.add(sphere_right_top)
+        self.scene.add(sphere_left_bottom)
+        self.scene.add(sphere_center_bottom)
+        self.scene.add(sphere_right_bottom)
 
 
         # circle1 = Note(x=-1.2, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note1.png", r=0.1, g=0.0, b=0.0)
@@ -116,17 +121,91 @@ class Example(Base):
         # self.scene.add(circle3)
         # self.scene.add(circle4)
 
-        self.ui = UI()
-        self.scene.add(self.ui)
+        self.bm_player = BmPlayer("beatmaps/recital.bm", self.scene)
+        self.game_ui = UI()
+        self.menu_ui = MenuUI()
+        self.highscore_ui = HighscoreUI(0)
 
-        # self.bm_player = BmPlayer("beatmaps/beatmap.bm", self.scene)
-        self.bm_player = BmPlayer("beatmaps/beatmap_rainbow.bm", self.scene)
-        self.bm_player.start(time.perf_counter_ns())
+        self.scene.add(self.menu_ui)
+
+
+        self.last_time_ns = time.perf_counter_ns()
+        self.fps_sum = 0
+        self.fps_count = 0
+        self.ms_seconds_counter = 0
+        self.fps = 0
+
+        self.after_clock_ms = -1
+        self.update_main_menu = True
+        self.beatmap_ended = False
+        self.close_game_ui = False
+        self.update_highscore = False
+        # self.after_clock_ms = -1
+        # self.update_main_menu = False
+        # self.beatmap_ended = False
+        # self.close_game_ui = False
+        # self.update_highscore = True
 
     def update(self):
+        # metrics
         curr_time_ns = time.perf_counter_ns()
-        # self.rig.update(self.input, self.delta_time)
-        self.bm_player.update(curr_time_ns, self.input)
+        delta_t_ms = int((curr_time_ns - self.last_time_ns) / 1000000)
+        curr_fps = 0
+        if (delta_t_ms != 0):
+            curr_fps = int(1000 / delta_t_ms)
+        self.fps_sum += curr_fps
+        self.fps_count += 1
+        self.ms_seconds_counter += delta_t_ms
+        self.last_time_ns = curr_time_ns
+
+        if (self.ms_seconds_counter >= 1000):
+            self.fps = int(self.fps_sum / self.fps_count)
+            self.fps_sum = 0
+            self.fps_count = 0
+            self.ms_seconds_counter = 0
+
+
+        # main update loop
+        is_player_active = self.bm_player.started
+        self.bm_player.update(curr_time_ns, delta_t_ms, self.input)
+        if (is_player_active and not self.bm_player.started):
+            self.beatmap_ended = True
+            self.after_clock_ms = 0
+        if self.beatmap_ended:
+            tmp = self.after_clock_ms
+            self.after_clock_ms += delta_t_ms
+            if (tmp <= 2000 and self.after_clock_ms > 2000):
+                self.close_game_ui = True
+                self.beatmap_ended = False
+
+        if self.close_game_ui:
+            self.close_game_ui = False
+            self.scene.remove(self.game_ui)
+            self.update_highscore = True
+            HighscoreUI.write_highscore(HighscoreUI.HIGHSCORES_FILE, Utils.get_username(), int(self.bm_player.score))
+            self.highscore_ui = HighscoreUI(self.bm_player.score)
+            self.scene.add(self.highscore_ui)
+
+        if self.bm_player.started or self.after_clock_ms <= 2000:
+            self.game_ui.update(self.fps, self.bm_player.combo, int(self.bm_player.score), self.scene)
+
+        if self.update_main_menu:
+            play = self.menu_ui.update(self.input)
+            if play:
+                self.update_main_menu = False
+                self.scene.remove(self.menu_ui)
+                self.bm_player.start(time.perf_counter_ns())
+                self.scene.add(self.game_ui)
+
+        if self.update_highscore:
+            should_continue = self.highscore_ui.update(self.input)
+            if should_continue:
+                self.update_highscore = False
+                self.scene.remove(self.highscore_ui)
+                self.update_main_menu = True
+                self.scene.add(self.menu_ui)
+
+        # renderer
         self.renderer.render(self.scene, self.camera)
 
 # Instantiate this class and run the program

@@ -11,6 +11,7 @@ class Input:
         self._key_down_list = []
         self._key_pressed_list = []
         self._key_up_list = []
+        self._mouse_down_list = []
 
     @property
     def key_down_list(self):
@@ -38,10 +39,23 @@ class Input:
     def is_key_up(self, key_code):
         return key_code in self._key_up_list
 
+    def is_mouse_left_down(self):
+        return "1" in self._mouse_down_list
+
+    def is_mouse_middle_down(self):
+        return "2" in self._mouse_down_list
+
+    def is_mouse_right_down(self):
+        return "3" in self._mouse_down_list
+
+    def get_mouse_pos(self):
+        return pygame.mouse.get_pos()
+
     def update(self):
         # Reset discrete key states
         self._key_down_list = []
         self._key_up_list = []
+        self._mouse_down_list = []
         # Iterate over all user input events (such as keyboard or mouse)
         # that occurred since the last time events were checked
         for event in pygame.event.get():
@@ -58,3 +72,5 @@ class Input:
                 key_name = pygame.key.name(event.key)
                 self._key_pressed_list.remove(key_name)
                 self._key_up_list.append(key_name)
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self._mouse_down_list.append(f"{event.button}")

@@ -1,9 +1,12 @@
+import pygame
 import random
 import csv
 from io import StringIO
 import math
 from note import Note
 from core_ext.scene import Scene
+from vfx import VFX
+from utils import Utils
 
 class BmPlayer:
     IMG_POOL = [
@@ -18,9 +21,17 @@ class BmPlayer:
 
     COMBO_MULTIPLIER = 0.1
 
-    PERFECT_RANGE = 0.05
-    GOOD_RANGE = 0.15
-    OK_RANGE = 0.30
+    PERFECT_RANGE = 0.10
+    GOOD_RANGE = 0.20
+    OK_RANGE = 0.40
+
+    MISS_SOUND_COMBO_THRESHOLD = 5
+    SONG_VOLUME = 1.0
+    HIT_SOUND_VOLUME = 0.15
+    MISS_SOUND_VOLUME = 0.3
+
+    VFX_WIDTH = 0.8
+    VFX_HEIGHT = 1.3
 
     KEY_POS_0 = "d"
     KEY_POS_1 = "f"
@@ -47,6 +58,17 @@ class BmPlayer:
         self.total_time_s = int(config['total_time_s'])
         self.speed_ms = int(config['speed_ms'])
         self.song_file = config['song_file']
+        self.hit_sound_file = config['hit_sound']
+        self.miss_sound_file = config['miss_sound']
+
+        pygame.mixer.init(frequency=48000, size=-16, channels=2, buffer=512)
+        self.hit_sound = pygame.mixer.Sound(self.hit_sound_file)
+        self.hit_sound.set_volume(self.HIT_SOUND_VOLUME)
+        self.miss_sound = pygame.mixer.Sound(self.miss_sound_file)
+        self.miss_sound.set_volume(self.MISS_SOUND_VOLUME)
+        self.sfx_channel = pygame.mixer.Channel(0)
+
+        self.vfx = VFX(self.VFX_WIDTH, self.VFX_HEIGHT, self.scene)
 
         self.last_time_ns = 0
         self.started = False
@@ -57,17 +79,8 @@ class BmPlayer:
         self.spawned_notes = []
         self.notes_remove_queue = []
 
-        print("\n")
-
-        print(f"total time: {self.total_time_s}s")
-        print(f"speed: {self.speed_ms}ms")
-        print(f"song file: {self.song_file}")
-
-        print("\n")
-
         self.notes_data = []
 
-        print(csv_data)
         index = 0
         for row in csv_data:
             if (index == 0):
@@ -84,17 +97,21 @@ class BmPlayer:
 
         print("\n")
 
-    def update(self, curr_time_ns, input_obj):
+        print(F"beatmap loaded.")
+        print(f"total time: {self.total_time_s}s")
+        print(f"speed: {self.speed_ms}ms")
+        print(f"song file: {self.song_file}")
+
+        print("\n")
+
+
+    def update(self, curr_time_ns, delta_t_ms, input_obj):
+        self.vfx.update(delta_t_ms)
         if (not self.started):
             return
 
         elapsed_ms = int((curr_time_ns - self.start_time_ns) / 1000000)
-        delta_t_ms = int((curr_time_ns - self.last_time_ns) / 1000000)
-        curr_fps = 0
-        if (delta_t_ms != 0):
-            curr_fps = int(1000 / delta_t_ms)
 
-        print(curr_fps)
         self.capture_input(input_obj)
         self.spawn_notes(elapsed_ms)
         self.update_notes(elapsed_ms)
@@ -110,22 +127,14 @@ class BmPlayer:
             note_pos = note[1]
             note_spawn_time_ms = note_ms - self.speed_ms
             if (note_spawn_time_ms < elapsed_ms):
-                print(f"Spawning note on {note_pos} at {elapsed_ms}")
+                # print(f"spawning note on {note_pos} at {elapsed_ms}")
                 self.spawn_note(note_pos, note_spawn_time_ms)
                 self.curr_note += 1
 
     def spawn_note(self, note_pos, note_spawn_time_ms):
         texture_file = self.IMG_POOL[random.randint(0, len(self.IMG_POOL) - 1)]
-        pos_x = 0
-        if (note_pos == 0):
-            pos_x = self.POSX_0
-        elif (note_pos == 1):
-            pos_x = self.POSX_1
-        elif (note_pos == 2):
-            pos_x = self.POSX_2
-        elif (note_pos == 3):
-            pos_x = self.POSX_3
-        else:
+        pos_x = self.lane_to_coords(note_pos)
+        if pos_x == None:
             print(f"Invalid note position! ({note_pos})")
             return
 
@@ -144,6 +153,24 @@ class BmPlayer:
         self.spawned_notes.append(note)
         self.scene.add(note)
 
+    def lane_to_coords(self, lane):
+        pos_x = 0.0
+        if (lane == 0):
+            pos_x = self.POSX_0
+        elif (lane == 1):
+            pos_x = self.POSX_1
+        elif (lane == 2):
+            pos_x = self.POSX_2
+        elif (lane == 3):
+            pos_x = self.POSX_3
+        else:
+            print(f"Invalid note position! ({lane})")
+            return None
+
+        return pos_x
+
+
+
     def update_notes(self, elapsed_ms):
         for nnote in self.spawned_notes:
             note: Note = nnote
@@ -154,7 +181,7 @@ class BmPlayer:
             total_travel = abs(end_y - start_y)
             target_y = start_y - total_travel * target_y_ratio
             if (target_y_ratio > 1.0 and not note.has_reached_perfect_line):
-                print(f"note reached end at {elapsed_ms}")
+                # print(f"note reached end at {elapsed_ms}")
                 note.has_reached_perfect_line = True
             if note.is_below_range(self.POSY_PERFECT, self.OK_RANGE):
                 self.miss(note)
@@ -170,13 +197,15 @@ class BmPlayer:
             note: Note = nnote
             self.spawned_notes.remove(note)
             self.scene.remove(note)
-            print("despawning note")
+            # print("despawning note")
         self.notes_remove_queue = []
 
     def check_end_condition(self):
         if (self.curr_note >= len(self.notes_data) and len(self.spawned_notes) == 0):
             print("beatmap has reached the end")
             self.started = False
+            self.stop_song()
+            # self.vfx.remove_all()
 
     def capture_input(self, input_obj):
         input_obj = input_obj
@@ -217,39 +246,64 @@ class BmPlayer:
                 continue
 
             if note.is_within_range(self.POSY_PERFECT, self.PERFECT_RANGE):
-                self.combo += 1
-                self.score += self.SCORE_PERFECT * self.combo * self.COMBO_MULTIPLIER
                 self.remove_note(note)
-                print(f"combo: {self.combo}")
-                print(f"score: {self.score}")
+                self.score += self.calc_score(self.SCORE_PERFECT, self.combo)
+                self.combo += 1
+                self.play_hit_sound()
+                self.vfx.create_perfect_vfx(self.lane_to_coords(note.lane), self.POSY_PERFECT + self.vfx.height / 2)
             elif note.is_within_range(self.POSY_PERFECT, self.GOOD_RANGE):
-                self.combo += 1
-                self.score += self.SCORE_GOOD * self.combo * self.COMBO_MULTIPLIER
                 self.remove_note(note)
-                print(f"combo: {self.combo}")
-                print(f"score: {self.score}")
+                self.score += self.calc_score(self.SCORE_GOOD, self.combo)
+                self.combo += 1
+                self.play_hit_sound()
+                self.vfx.create_good_vfx(self.lane_to_coords(note.lane), self.POSY_PERFECT + self.vfx.height / 2)
             elif note.is_within_range(self.POSY_PERFECT, self.OK_RANGE):
                 self.remove_note(note)
+                self.score += self.calc_score(self.SCORE_OK, self.combo)
                 self.combo += 1
-                self.score += self.SCORE_OK * self.combo * self.COMBO_MULTIPLIER
-                print(f"combo: {self.combo}")
-                print(f"score: {self.score}")
-            # else:
-            #     self.miss(note)
+                self.play_hit_sound()
+                self.vfx.create_ok_vfx(self.lane_to_coords(note.lane), self.POSY_PERFECT + self.vfx.height / 2)
+
+    def calc_score(self, hit_score, combo):
+        return hit_score + hit_score * combo * self.COMBO_MULTIPLIER
         
 
-    def miss(self, note):
+    def miss(self, note: Note):
         if note.missed:
             return
         note.missed = True
-        print("miss!")
+        # print("miss!")
+        # self.vfx.create_miss_vfx(self.lane_to_coords(note.lane), self.POSY_PERFECT + self.vfx.height / 2)
+        self.vfx.create_miss_vfx(0.0, Utils.percentToRelative([0, 0.7])[1])
+        if self.combo > self.MISS_SOUND_COMBO_THRESHOLD:
+            self.play_miss_sound()
         self.combo = 0
+
+    def play_hit_sound(self):
+        self.sfx_channel.play(self.hit_sound)
+
+    def play_miss_sound(self):
+        self.sfx_channel.play(self.miss_sound)
 
     def start(self, start_time_ns):
         self.start_time_ns = start_time_ns
         self.started = True
         self.last_time_ns = start_time_ns
 
+        self.curr_note = 0
+        self.score = 0.0
+        self.combo = 0
+        self.spawned_notes = []
+        self.notes_remove_queue = []
+        self.start_song()
+
+    def start_song(self):
+        pygame.mixer.music.load(self.song_file)
+        pygame.mixer.music.set_volume(self.SONG_VOLUME)
+        pygame.mixer.music.play()
+
+    def stop_song(self):
+        pygame.mixer.music.stop()
 
     @staticmethod
     def parse_beatmap(file_path: str):
@@ -272,4 +326,3 @@ class BmPlayer:
         csv_data = list(csv.reader(StringIO('\n'.join(csv_lines))))
 
         return config, csv_data
-
