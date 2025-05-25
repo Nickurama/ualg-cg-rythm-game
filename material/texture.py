@@ -4,7 +4,7 @@ from material.material import Material
 
 
 class TextureMaterial(Material):
-    def __init__(self, texture, property_dict=None):
+    def __init__(self, texture, property_dict=None, alpha=1.0):
         vertex_shader_code = """
             uniform mat4 projectionMatrix;
             uniform mat4 viewMatrix;
@@ -24,12 +24,13 @@ class TextureMaterial(Material):
         fragment_shader_code = """
             uniform vec3 baseColor;
             uniform sampler2D textureSampler;
+            uniform float alpha;
             in vec2 UV;
             out vec4 fragColor;
             void main()
             {
-                vec4 color = vec4(baseColor, 1.0) * texture(textureSampler, UV);
-                if (color.a < 0.1)
+                vec4 color = vec4(baseColor, alpha) * texture(textureSampler, UV);
+                if (color.a < 0.100)
                     discard;                    
                 fragColor = color;
             }
@@ -39,6 +40,7 @@ class TextureMaterial(Material):
         self.add_uniform("sampler2D", "textureSampler", [texture.texture_ref, 1])
         self.add_uniform("vec2", "repeatUV", [1.0, 1.0])
         self.add_uniform("vec2", "offsetUV", [0.0, 0.0])
+        self.add_uniform("float", "alpha", alpha)
         self.locate_uniforms()
         # Render both sides?
         self.setting_dict["doubleSide"] = True
@@ -47,6 +49,10 @@ class TextureMaterial(Material):
         # line thickness for wireframe rendering
         self.setting_dict["lineWidth"] = 1
         self.set_properties(property_dict)
+
+    def set_alpha(self, alpha):
+        self.add_uniform("float", "alpha", alpha)
+        self.locate_uniforms()
 
     def update_render_settings(self):
         if self.setting_dict["doubleSide"]:

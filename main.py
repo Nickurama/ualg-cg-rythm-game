@@ -104,12 +104,12 @@ class Example(Base):
         sphere_right_bottom = Mesh(sphere_geometry, textured_phong_material)
         sphere_right_bottom.set_position([2.5, -1.5, 0])
 
-        # self.scene.add(sphere_left_top)
-        # self.scene.add(sphere_center_top)
-        # self.scene.add(sphere_right_top)
-        # self.scene.add(sphere_left_bottom)
-        # self.scene.add(sphere_center_bottom)
-        # self.scene.add(sphere_right_bottom)
+        self.scene.add(sphere_left_top)
+        self.scene.add(sphere_center_top)
+        self.scene.add(sphere_right_top)
+        self.scene.add(sphere_left_bottom)
+        self.scene.add(sphere_center_bottom)
+        self.scene.add(sphere_right_bottom)
 
 
         # circle1 = Note(x=-1.2, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note1.png", r=0.1, g=0.0, b=0.0)
@@ -121,7 +121,7 @@ class Example(Base):
         # self.scene.add(circle3)
         # self.scene.add(circle4)
 
-        self.bm_player = BmPlayer("beatmaps/beatmap_slow.bm", self.scene)
+        self.bm_player = BmPlayer("beatmaps/beatmap.bm", self.scene)
         self.game_ui = UI()
         self.menu_ui = MenuUI()
         self.highscore_ui = HighscoreUI(0)
@@ -167,7 +167,7 @@ class Example(Base):
 
         # main update loop
         is_player_active = self.bm_player.started
-        self.bm_player.update(curr_time_ns, self.input)
+        self.bm_player.update(curr_time_ns, delta_t_ms, self.input)
         if (is_player_active and not self.bm_player.started):
             self.beatmap_ended = True
             self.after_clock_ms = 0
