@@ -250,21 +250,18 @@ class BmPlayer:
                 self.combo += 1
                 self.play_hit_sound()
                 self.vfx.create_perfect_vfx(self.lane_to_coords(note.lane), self.POSY_PERFECT + self.vfx.height / 2)
-                print("perfect!")
             elif note.is_within_range(self.POSY_PERFECT, self.GOOD_RANGE):
                 self.remove_note(note)
                 self.score += self.calc_score(self.SCORE_GOOD, self.combo)
                 self.combo += 1
                 self.play_hit_sound()
                 self.vfx.create_good_vfx(self.lane_to_coords(note.lane), self.POSY_PERFECT + self.vfx.height / 2)
-                print("good!")
             elif note.is_within_range(self.POSY_PERFECT, self.OK_RANGE):
                 self.remove_note(note)
                 self.score += self.calc_score(self.SCORE_OK, self.combo)
                 self.combo += 1
                 self.play_hit_sound()
                 self.vfx.create_ok_vfx(self.lane_to_coords(note.lane), self.POSY_PERFECT + self.vfx.height / 2)
-                print("ok!")
 
     def calc_score(self, hit_score, combo):
         return hit_score + hit_score * combo * self.COMBO_MULTIPLIER
