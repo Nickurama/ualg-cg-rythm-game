@@ -95,7 +95,7 @@ class BmPlayer:
         if (delta_t_ms != 0):
             curr_fps = int(1000 / delta_t_ms)
 
-        print(curr_fps)
+        # print(curr_fps)
         self.capture_input(input_obj)
         self.spawn_notes(elapsed_ms)
         self.update_notes(elapsed_ms)
@@ -219,25 +219,29 @@ class BmPlayer:
                 continue
 
             if note.is_within_range(self.POSY_PERFECT, self.PERFECT_RANGE):
-                self.combo += 1
-                self.score += self.SCORE_PERFECT * self.combo * self.COMBO_MULTIPLIER
                 self.remove_note(note)
+                self.score += self.calc_score(self.SCORE_PERFECT, self.combo)
+                self.combo += 1
+                print("perfect!")
                 print(f"combo: {self.combo}")
                 print(f"score: {self.score}")
             elif note.is_within_range(self.POSY_PERFECT, self.GOOD_RANGE):
-                self.combo += 1
-                self.score += self.SCORE_GOOD * self.combo * self.COMBO_MULTIPLIER
                 self.remove_note(note)
+                self.score += self.calc_score(self.SCORE_GOOD, self.combo)
+                self.combo += 1
+                print("good!")
                 print(f"combo: {self.combo}")
                 print(f"score: {self.score}")
             elif note.is_within_range(self.POSY_PERFECT, self.OK_RANGE):
                 self.remove_note(note)
+                self.score += self.calc_score(self.SCORE_OK, self.combo)
                 self.combo += 1
-                self.score += self.SCORE_OK * self.combo * self.COMBO_MULTIPLIER
+                print("ok!")
                 print(f"combo: {self.combo}")
                 print(f"score: {self.score}")
-            # else:
-            #     self.miss(note)
+
+    def calc_score(self, hit_score, combo):
+        return hit_score + hit_score * combo * self.COMBO_MULTIPLIER
         
 
     def miss(self, note):
