@@ -40,13 +40,16 @@ class Input:
         return key_code in self._key_up_list
 
     def is_mouse_left_down(self):
-        return 1 in self._mouse_down_list
+        return "1" in self._mouse_down_list
 
     def is_mouse_middle_down(self):
-        return 2 in self._mouse_down_list
+        return "2" in self._mouse_down_list
 
     def is_mouse_right_down(self):
-        return 3 in self._mouse_down_list
+        return "3" in self._mouse_down_list
+
+    def get_mouse_pos(self):
+        return pygame.mouse.get_pos()
 
     def update(self):
         # Reset discrete key states
@@ -70,4 +73,4 @@ class Input:
                 self._key_pressed_list.remove(key_name)
                 self._key_up_list.append(key_name)
             if event.type == pygame.MOUSEBUTTONDOWN:
-                self._mouse_down_list.append(event.button)
+                self._mouse_down_list.append(f"{event.button}")

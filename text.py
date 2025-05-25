@@ -5,10 +5,11 @@ from core_ext.mesh import Mesh
 from geometry.rectangle import RectangleGeometry
 
 class Text(Object3D):
-    def __init__(self, text, padding, size, x, y, align_right=False):
+    def __init__(self, text, x, y, size, padding=0.8, align_right=False, centered=False):
         super().__init__()
-        self.text = text
+        self.text = ""
         self.padding = padding
+        self.centered = centered
         self.size = size
         self.x = x
         self.y = y
@@ -24,7 +25,7 @@ class Text(Object3D):
         self._children_list = []
 
         counter = 0
-        total_size = 0
+        self.total_size = 0
         for char in str(text):
             geometry = RectangleGeometry(self.size, self.size);
             material = TextureMaterial(texture=Texture(f"images/font/font_{char}.png"))
@@ -32,8 +33,10 @@ class Text(Object3D):
             mesh.set_position([(self.size / 2.0) + counter * self.padding * self.size, -self.size / 2.0, 0.0])
             counter += 1
             self.add(mesh)
-        total_size += counter * self.size * self.padding
+        self.total_size += counter * self.size * self.padding
         if self.align_right:
-            self.set_position([self.x - total_size, self.y, 3.0])
+            self.set_position([self.x - self.total_size, self.y, 3.0])
+        elif self.centered:
+            self.set_position([self.x - self.total_size / 2, self.y + self.size / 2, 3.0])
         else:
             self.set_position([self.x, self.y, 3.0])

@@ -1,6 +1,27 @@
 import math
 
 class Utils:
+    MAX_X = 2.308
+    MAX_Y = 1.730
+    PIXELS_X = 1200
+    PIXELS_Y = 900
+
+    @staticmethod
+    def toPixels(coord):
+        normalized_x = (coord[0] + Utils.MAX_X) / (2 * Utils.MAX_X)
+        normalized_y = (coord[1] + Utils.MAX_Y) / (2 * Utils.MAX_Y)
+        pixel_x = int(Utils.PIXELS_X * normalized_x)
+        pixel_y = int(Utils.PIXELS_Y * (1 - normalized_y))
+        return [pixel_x, pixel_y]
+
+    @staticmethod
+    def toRelative(coord):
+        normalized_x = coord[0] / Utils.PIXELS_X
+        normalized_y = coord[1] / Utils.PIXELS_Y
+        rel_x = normalized_x * 2 * Utils.MAX_X - Utils.MAX_X
+        rel_y = (1 - normalized_y) * 2 * Utils.MAX_Y - Utils.MAX_Y
+        return [rel_x, rel_y]
+
     @staticmethod
     def fillColor(r, g, b, n):
         curr_colors = []

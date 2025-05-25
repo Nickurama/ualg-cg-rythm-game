@@ -44,9 +44,9 @@ class UI(Object3D):
         good_range0, good_range1 = self.create_range(self.PERFECT_POS, self.GOOD_RANGE)
         ok_range0, ok_range1 = self.create_range(self.PERFECT_POS, self.OK_RANGE)
         lane0, lane1, lane2 = self.create_lanes()
-        self.fps_text = Text("", self.TEXT_PADDING, self.TEXT_FPS_SIZE, self.TEXT_FPS_X, self.TEXT_FPS_Y, True)
-        self.combo_text = Text("", self.TEXT_PADDING, self.TEXT_COMBO_SIZE, self.TEXT_COMBO_X, self.TEXT_COMBO_Y)
-        self.score_text = Text("", self.TEXT_PADDING, self.TEXT_SCORE_SIZE, self.TEXT_SCORE_X, self.TEXT_SCORE_Y)
+        self.fps_text = Text("", self.TEXT_FPS_X, self.TEXT_FPS_Y, self.TEXT_FPS_SIZE, self.TEXT_PADDING, True)
+        self.combo_text = Text("", self.TEXT_COMBO_X, self.TEXT_COMBO_Y, self.TEXT_COMBO_SIZE, self.TEXT_PADDING)
+        self.score_text = Text("", self.TEXT_SCORE_X, self.TEXT_SCORE_Y, self.TEXT_SCORE_SIZE, self.TEXT_PADDING)
 
         self.add(self.fps_text)
         self.add(self.combo_text)
