@@ -18,21 +18,29 @@ class HighscoreUI(Object3D):
     TITLE_POS_PERCENT_Y = 0.9
     TITLE_SIZE = 0.3
 
-    TITLE_PADDING = 0.3
+    TITLE_PADDING = 0.1
     PADDING = 0.1
     SCORE_SIZE = 0.2
 
     TOTAL_SCORES = 8
 
+    MAIN_SCORE_SIZE = 0.25
 
-    def __init__(self):
+
+    def __init__(self, main_score):
         super().__init__()
 
         self.title_pos = Utils.percentToRelative([self.TITLE_POS_PERCENT_X, self.TITLE_POS_PERCENT_Y])
         self.title = Text(self.TITLE_TEXT, self.title_pos[0], self.title_pos[1], self.TITLE_SIZE, centered=True)
+        self.main_highscore = self.create_main_highscore_text(main_score)
         self.highscores = self.create_highscore_text()
 
         self.add(self.title)
+
+    def create_main_highscore_text(self, score):
+        text = Text(int(score), 0.0, self.title_pos[1] - self.title.height / 2 - self.TITLE_PADDING - self.MAIN_SCORE_SIZE / 2,
+                         self.MAIN_SCORE_SIZE, centered=True)
+        self.add(text)
 
     def create_highscore_text(self):
         highscores = self.load_highscores(self.HIGHSCORES_FILE)
@@ -44,10 +52,10 @@ class HighscoreUI(Object3D):
             user = highscore[0]
             score = int(highscore[1])
             user_text = Text(user, self.title_pos[0] - self.title.width / 2,
-                             self.title_pos[1] - self.title.height / 2 - self.TITLE_PADDING - count * (self.SCORE_SIZE + self.PADDING),
+                             self.title_pos[1] - self.title.height / 2 - self.TITLE_PADDING - count * (self.SCORE_SIZE + self.PADDING) - self.TITLE_PADDING - self.MAIN_SCORE_SIZE,
                              self.SCORE_SIZE, align_right=False)
             score_text = Text(score, self.title_pos[0] + self.title.width / 2,
-                             self.title_pos[1] - self.title.height / 2 - self.TITLE_PADDING - count * (self.SCORE_SIZE + self.PADDING),
+                             self.title_pos[1] - self.title.height / 2 - self.TITLE_PADDING - count * (self.SCORE_SIZE + self.PADDING) - self.TITLE_PADDING - self.MAIN_SCORE_SIZE,
                              self.SCORE_SIZE, align_right=True)
             self.add(user_text)
             self.add(score_text)

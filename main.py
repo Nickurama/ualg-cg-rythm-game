@@ -124,7 +124,7 @@ class Example(Base):
         self.bm_player = BmPlayer("beatmaps/beatmap_slow.bm", self.scene)
         self.game_ui = UI()
         self.menu_ui = MenuUI()
-        self.highscore_ui = HighscoreUI()
+        self.highscore_ui = HighscoreUI(0)
 
         self.scene.add(self.menu_ui)
 
@@ -183,7 +183,7 @@ class Example(Base):
             self.scene.remove(self.game_ui)
             self.update_highscore = True
             HighscoreUI.write_highscore(HighscoreUI.HIGHSCORES_FILE, Utils.get_username(), int(self.bm_player.score))
-            self.highscore_ui = HighscoreUI()
+            self.highscore_ui = HighscoreUI(self.bm_player.score)
             self.scene.add(self.highscore_ui)
 
         if self.bm_player.started or self.after_clock_ms <= 2000:
