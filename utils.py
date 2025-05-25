@@ -1,10 +1,15 @@
 import math
+import os
 
 class Utils:
     MAX_X = 2.308
     MAX_Y = 1.730
     PIXELS_X = 1200
     PIXELS_Y = 900
+
+    @staticmethod
+    def get_username():
+        return os.environ.get("USER") or os.environ.get("USERNAME")
 
     @staticmethod
     def collides_rectangle(point, center, width, height):

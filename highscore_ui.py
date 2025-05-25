@@ -55,7 +55,7 @@ class HighscoreUI(Object3D):
 
 
     @staticmethod
-    def load_highscores(file) -> List[List[str]]:
+    def load_highscores(file):
         data = []
         with open(file, 'r') as file:
             reader = csv.reader(file)
@@ -63,7 +63,16 @@ class HighscoreUI(Object3D):
 
         return data
 
+    @staticmethod
+    def write_highscore(file, name, score: int):
+        highscores = HighscoreUI.load_highscores(HighscoreUI.HIGHSCORES_FILE)
+        highscores.append([name, str(score)])
+        highscores = sorted(highscores, key=lambda x: -int(x[1]))
+        with open(file, 'w', newline="\n") as file:
+            writer = csv.writer(file)
+            writer.writerows(highscores)
 
 
-    def update(self):
-        return False
+
+    def update(self, input):
+        return input.is_mouse_left_down()

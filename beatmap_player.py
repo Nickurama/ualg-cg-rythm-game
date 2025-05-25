@@ -247,6 +247,12 @@ class BmPlayer:
         self.start_time_ns = start_time_ns
         self.started = True
         self.last_time_ns = start_time_ns
+
+        self.curr_note = 0
+        self.score = 0.0
+        self.combo = 0
+        self.spawned_notes = []
+        self.notes_remove_queue = []
         self.start_song()
 
     def start_song(self):

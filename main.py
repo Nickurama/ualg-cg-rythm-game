@@ -3,6 +3,7 @@ import pathlib
 import sys
 import math
 import pygame
+import os
 import time
 
 from material.surface import SurfaceMaterial
@@ -29,6 +30,7 @@ from ui import UI
 from menu_ui import MenuUI
 from highscore_ui import HighscoreUI
 from text import Text
+from utils import Utils
 
 
 class Example(Base):
@@ -124,7 +126,7 @@ class Example(Base):
         self.menu_ui = MenuUI()
         self.highscore_ui = HighscoreUI()
 
-        # self.scene.add(self.menu_ui)
+        self.scene.add(self.menu_ui)
 
 
         self.last_time_ns = time.perf_counter_ns()
@@ -133,17 +135,16 @@ class Example(Base):
         self.ms_seconds_counter = 0
         self.fps = 0
 
-        # self.after_clock_ms = -1
-        # self.update_main_menu = True
-        # self.beatmap_ended = False
-        # self.close_game_ui = False
-        # self.update_highscore = False
         self.after_clock_ms = -1
-        self.update_main_menu = False
+        self.update_main_menu = True
         self.beatmap_ended = False
         self.close_game_ui = False
-        self.update_highscore = True
-        self.scene.add(self.highscore_ui)
+        self.update_highscore = False
+        # self.after_clock_ms = -1
+        # self.update_main_menu = False
+        # self.beatmap_ended = False
+        # self.close_game_ui = False
+        # self.update_highscore = True
 
     def update(self):
         # metrics
@@ -181,9 +182,11 @@ class Example(Base):
             self.close_game_ui = False
             self.scene.remove(self.game_ui)
             self.update_highscore = True
+            HighscoreUI.write_highscore(HighscoreUI.HIGHSCORES_FILE, Utils.get_username(), int(self.bm_player.score))
+            self.highscore_ui = HighscoreUI()
             self.scene.add(self.highscore_ui)
 
-        if self.bm_player.started and self.after_clock_ms <= 2000:
+        if self.bm_player.started or self.after_clock_ms <= 2000:
             self.game_ui.update(self.fps, self.bm_player.combo, int(self.bm_player.score), self.scene)
 
         if self.update_main_menu:
@@ -195,7 +198,7 @@ class Example(Base):
                 self.scene.add(self.game_ui)
 
         if self.update_highscore:
-            should_continue = self.highscore_ui.update()
+            should_continue = self.highscore_ui.update(self.input)
             if should_continue:
                 self.update_highscore = False
                 self.scene.remove(self.highscore_ui)
