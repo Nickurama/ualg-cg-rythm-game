@@ -46,4 +46,3 @@ class BasicMaterial(Material):
     def set_alpha(self, alpha):
         self.add_uniform("float", "alpha", alpha)
         self.locate_uniforms()
-

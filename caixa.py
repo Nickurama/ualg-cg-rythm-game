@@ -100,6 +100,7 @@ class Caixa(Object3D):
         self.add(self.stick_1)
 
         self.stick_0.set_position
+        #self.stick_0.set_position
         self.drum_initial_matrix = self.drum.local_matrix
         self.stick_0_initial_matrix = self.stick_0.local_matrix
         self.stick_1_initial_matrix = self.stick_1.local_matrix
@@ -129,3 +130,4 @@ class Caixa(Object3D):
             self.stick_1.rotate_z(-delta_t_ms * self.STICK_ROTATION_SPEED, local=True)
             # self.drum.set_position([self.drum.local_position[0], self.drum.local_position[1] - delta_t_ms * self.BASE_JUMP_SPEED, self.drum.local_position[2]])
 
+            # self.drum.set_position([self.drum.local_position[0], self.drum.local_position[1] - delta_t_ms * self.BASE_JUMP_SPEED, self.drum.local_position[2]])

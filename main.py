@@ -34,6 +34,9 @@ from text import Text
 from utils import Utils
 from caixa import Caixa
 from guitarra import Guitarra
+from recital import Recital
+from castanholas import Castanholas
+from core_ext.object3d import Object3D
 
 
 class Example(Base):
@@ -48,29 +51,63 @@ class Example(Base):
         self.scene.add(self.rig)
 
 
-        # Lighting
+         # Lighting
+        self.everything = Object3D()
         ambient_light = AmbientLight(color=[0.01, 0.01, 0.01])
-        directional_light = DirectionalLight(color=[1.0, 1.0, 1.0], direction=[-1, -1, -2])
-        point_light1 = PointLight(color=[0.1, 0, 0], position=[4, 0, 0])
-        point_light2 = PointLight(color=[0, 0.1, 0], position=[-4, 0, 0])
-        self.scene.add(ambient_light)
-        self.scene.add(directional_light)
-        self.scene.add(point_light1)
-        self.scene.add(point_light2)
+        self.everything.add(ambient_light)
+        #self.scene.add(ambient_light)
 
-        # Guitarra (instrumento)
-        self.guitarra = Guitarra(light_sources=4)
-        self.guitarra.set_position([7.0, -5.3, -7.27])
+
+        self.directional_light1 = DirectionalLight(color=[0.3, 0.3, 0.3])
+        self.directional_light1.set_position([0, 6, -12.0])
+        #self.directional_light1.look_at([0.0, -1.0, -12.0])
+        self.everything.add(self.directional_light1)
+        #self.scene.add(self.directional_light1)
+
+
+        self.directional_light3 = DirectionalLight(color=[0.3, 0.3, 0.3])
+        self.directional_light3.set_position([0, 6, -3.0])
+        self.directional_light3.look_at([-3.0, 0.0, -12.0])
+        self.everything.add(self.directional_light3)
+        #self.scene.add(self.directional_light3)
+
+        rotation = 0.3
+
+        # Scenario
+        self.recital = Recital(light_sources=3)
+        self.recital.rotate_y(math.pi)
+        self.recital.set_position([0, -4, -10])
+        #self.scene.add(self.recital)
+        self.everything.add(self.recital)
+        # Instrumentos
+        self.instruments = Object3D()
+        self.caixa = Caixa(light_sources=3)
+        self.caixa.set_position([-2.0, -1.2, -12])
+        self.instruments.add(self.caixa)
+        #self.scene.add(self.caixa)
+
+        self.castanholas = Castanholas(light_sources=3)
+        self.castanholas.set_position([-5.6, -1.1, -12])
+        self.castanholas.scale(0.5)
+        self.instruments.add(self.castanholas)
+        #self.scene.add(self.castanholas)
+
+        self.guitarra = Guitarra(light_sources=3)
+        self.guitarra.set_position([1.6, -1.1, -12])
         self.guitarra.rotate_y(-90)
-        self.scene.add(self.guitarra)
+        self.guitarra.scale(0.6)
+        self.instruments.add(self.guitarra)
 
-        # Caixa (instrumento)
-        self.caixa = Caixa(light_sources=4)
-        self.caixa.set_position([0.0, -2.3, 0])
-        self.scene.add(self.caixa)
+        #self.instruments.rotate_x(rotation)
+        #self.scene.add(self.instruments)
+        self.everything.add(self.instruments)
+        self.scene.add(self.everything)
+        self.everything.rotate_x(rotation)
+        self.everything.rotate_y(1.1)
+        self.everything.set_position([8, 2, -5])
+        #self.scene.add(self.guitarra)
 
-
-        # main components
+        # Beatmap Player
         self.bm_player = BmPlayer("beatmaps/recital.bm", self.scene)
         self.game_ui = UI()
         self.menu_ui = MenuUI()
@@ -153,6 +190,7 @@ class Example(Base):
 
         self.caixa.update(delta_t_ms)
         self.guitarra.update(delta_t_ms)
+        self.castanholas.update(delta_t_ms)
 
         # renderer
         self.renderer.render(self.scene, self.camera)

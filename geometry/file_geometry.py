@@ -24,7 +24,7 @@ class FileGeometry(Geometry):
             self.add_attribute("vec3", "vertexPosition", shifted_position_data)
         else:
             self.add_attribute("vec3", "vertexPosition", position_data)
-        
+
         self.add_attribute("vec2", "vertexUV", uv_data)
         self.add_attribute("vec3", "vertexNormal", normal_data)
         self.add_attribute("vec3", "faceNormal", normal_data)
