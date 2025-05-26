@@ -19,8 +19,8 @@ class MenuUI(Object3D):
     PLAY_X = 0.0
     PLAY_Y = -0.5
     PLAY_TEXT_SIZE = 0.2
-    PLAY_BTN_W = 2.0
-    PLAY_BTN_H = 0.6666
+    PLAY_BTN_W = 1.5
+    PLAY_BTN_H = 0.5
 
     def __init__(self):
         super().__init__()
@@ -43,6 +43,7 @@ class MenuUI(Object3D):
         color_data = Utils.fillColor(1.0, 0.427, 0.416, geometry.vertex_count)
         geometry.add_attribute("vec3", "vertexColor", color_data)
         material = SurfaceMaterial(property_dict={"useVertexColors": True})
+        material.set_alpha(0.6)
         mesh = Mesh(geometry, material)
         mesh.set_position([x, y, 3.0])
         return mesh

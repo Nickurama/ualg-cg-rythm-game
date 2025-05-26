@@ -33,6 +33,7 @@ from highscore_ui import HighscoreUI
 from text import Text
 from utils import Utils
 from caixa import Caixa
+from guitarra import Guitarra
 
 
 class Example(Base):
@@ -57,83 +58,25 @@ class Example(Base):
         self.scene.add(point_light1)
         self.scene.add(point_light2)
 
-        basecolor_material = BasicMaterial()
+        # Guitarra (instrumento)
+        self.guitarra = Guitarra(light_sources=4)
+        self.guitarra.set_position([7.0, -5.3, -7.27])
+        self.guitarra.rotate_y(-90)
+        self.scene.add(self.guitarra)
 
-        # lighted materials with a color
-        flat_material = FlatMaterial(
-            property_dict={"baseColor": [0.2, 0.5, 0.5]},
-            number_of_light_sources=4
-        )
-        lambert_material = LambertMaterial(
-            property_dict={"baseColor": [0.2, 0.5, 0.5]},
-            number_of_light_sources=4
-        )
-        phong_material = PhongMaterial(
-            property_dict={"baseColor": [0.2, 0.5, 0.5]},
-            number_of_light_sources=4
-        )
+        # Caixa (instrumento)
+        self.caixa = Caixa(light_sources=4)
+        self.caixa.set_position([0.0, -2.3, 0])
+        self.scene.add(self.caixa)
 
 
-        # lighted spheres with a color
-        sphere_geometry = SphereGeometry()
-        sphere_left_top = Mesh(sphere_geometry, flat_material)
-        sphere_left_top.set_position([-2.5, 1.5, 0])
-        sphere_center_top = Mesh(sphere_geometry, lambert_material)
-        sphere_center_top.set_position([0, 1.5, 0])
-        sphere_right_top = Mesh(sphere_geometry, phong_material)
-        sphere_right_top.set_position([2.5, 1.5, 0])
-
-        # lighted materials with a texture
-        textured_flat_material = FlatMaterial(
-            texture=Texture("images/grid.jpg"),
-            number_of_light_sources=4
-        )
-        textured_lambert_material = LambertMaterial(
-            texture=Texture("images/grid.jpg"),
-            number_of_light_sources=4
-        )
-        textured_phong_material = PhongMaterial(
-            texture=Texture("images/grid.jpg"),
-            number_of_light_sources=4
-        )
-
-
-        # lighted spheres with a texture
-        sphere_left_bottom = Mesh(sphere_geometry, textured_flat_material)
-        sphere_left_bottom.set_position([-2.5, -1.5, 0])
-        sphere_center_bottom = Mesh(sphere_geometry, textured_lambert_material)
-        sphere_center_bottom.set_position([0, -1.5, 0])
-        # sphere_right_bottom = Mesh(sphere_geometry, textured_phong_material)
-        # sphere_right_bottom.set_position([2.5, -1.5, 0])
-
-        self.scene.add(sphere_left_top)
-        self.scene.add(sphere_center_top)
-        self.scene.add(sphere_right_top)
-        self.scene.add(sphere_left_bottom)
-        self.scene.add(sphere_center_bottom)
-
-        # box = Mesh(BoxGeometry(), textured_flat_material)
-        # box.set_position([2.5, -1.5, 0])
-        # self.scene.add(box)
-        caixa = Caixa(light_sources=4)
-        caixa.set_position([2.5, -1.5, 0])
-        self.scene.add(caixa)
-
-
-        # circle1 = Note(x=-1.2, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note1.png", r=0.1, g=0.0, b=0.0)
-        # circle2 = Note(x=-0.4, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note2.png", r=0.1, g=0.0, b=0.0)
-        # circle3 = Note(x= 0.4, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note3.png", r=0.1, g=0.0, b=0.0)
-        # circle4 = Note(x= 1.2, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note1.png", r=0.1, g=0.0, b=0.0)
-        # self.scene.add(circle1)
-        # self.scene.add(circle2)
-        # self.scene.add(circle3)
-        # self.scene.add(circle4)
-
+        # main components
         self.bm_player = BmPlayer("beatmaps/recital.bm", self.scene)
         self.game_ui = UI()
         self.menu_ui = MenuUI()
         self.highscore_ui = HighscoreUI(0)
 
+        # setup
         self.scene.add(self.menu_ui)
 
 
@@ -148,11 +91,6 @@ class Example(Base):
         self.beatmap_ended = False
         self.close_game_ui = False
         self.update_highscore = False
-        # self.after_clock_ms = -1
-        # self.update_main_menu = False
-        # self.beatmap_ended = False
-        # self.close_game_ui = False
-        # self.update_highscore = True
 
     def update(self):
         # metrics
@@ -212,6 +150,9 @@ class Example(Base):
                 self.scene.remove(self.highscore_ui)
                 self.update_main_menu = True
                 self.scene.add(self.menu_ui)
+
+        self.caixa.update(delta_t_ms)
+        self.guitarra.update(delta_t_ms)
 
         # renderer
         self.renderer.render(self.scene, self.camera)
