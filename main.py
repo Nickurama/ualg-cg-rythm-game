@@ -57,19 +57,19 @@ class Example(Base):
         self.scene.add(self.directional_light)
 
         # Scenario
-        recital = Recital(light_sources=2)
-        recital.rotate_y(math.pi)
-        recital.set_position([0, -4, -10])
-        self.scene.add(recital)
+        self.recital = Recital(light_sources=2)
+        self.recital.rotate_y(math.pi)
+        self.recital.set_position([0, -4, -10])
+        self.scene.add(self.recital)
 
         # Instrumentos
-        caixa = Caixa(light_sources=2)
-        caixa.set_position([2.1, -1.2, -10])
-        self.scene.add(caixa)
+        self.caixa = Caixa(light_sources=2)
+        self.caixa.set_position([2.1, -1.2, -10])
+        self.scene.add(self.caixa)
 
-        castanholas = Castanholas(light_sources=2)
-        castanholas.set_position([-1.7, -1.1, -10])
-        self.scene.add(castanholas)
+        self.castanholas = Castanholas(light_sources=2)
+        self.castanholas.set_position([-1.7, -1.1, -10])
+        self.scene.add(self.castanholas)
 
         # Beatmap Player
         self.bm_player = BmPlayer("beatmaps/recital.bm", self.scene)
@@ -155,6 +155,9 @@ class Example(Base):
                 self.scene.remove(self.highscore_ui)
                 self.update_main_menu = True
                 self.scene.add(self.menu_ui)
+
+        self.caixa.update(delta_t_ms)
+        self.castanholas.update(delta_t_ms)
 
         # renderer
         self.renderer.render(self.scene, self.camera)
