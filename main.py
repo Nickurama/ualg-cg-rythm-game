@@ -33,6 +33,8 @@ from highscore_ui import HighscoreUI
 from text import Text
 from utils import Utils
 from caixa import Caixa
+from recital import Recital
+from castanholas import Castanholas
 
 
 class Example(Base):
@@ -47,88 +49,29 @@ class Example(Base):
         self.scene.add(self.rig)
 
 
-        # Lighting
+         # Lighting
         ambient_light = AmbientLight(color=[0.01, 0.01, 0.01])
-        directional_light = DirectionalLight(color=[1.0, 1.0, 1.0], direction=[-1, -1, -2])
-        point_light1 = PointLight(color=[0.1, 0, 0], position=[4, 0, 0])
-        point_light2 = PointLight(color=[0, 0.1, 0], position=[-4, 0, 0])
         self.scene.add(ambient_light)
-        self.scene.add(directional_light)
-        self.scene.add(point_light1)
-        self.scene.add(point_light2)
+        self.directional_light = DirectionalLight(color=[0.5, 0.5, 0.5], direction=[-1, -1, -2])
+        self.directional_light.set_position([0, 0, 0])
+        self.scene.add(self.directional_light)
 
-        basecolor_material = BasicMaterial()
+        # Scenario
+        recital = Recital(light_sources=2)
+        recital.rotate_y(math.pi)
+        recital.set_position([0, -4, -10])
+        self.scene.add(recital)
 
-        # lighted materials with a color
-        flat_material = FlatMaterial(
-            property_dict={"baseColor": [0.2, 0.5, 0.5]},
-            number_of_light_sources=4
-        )
-        lambert_material = LambertMaterial(
-            property_dict={"baseColor": [0.2, 0.5, 0.5]},
-            number_of_light_sources=4
-        )
-        phong_material = PhongMaterial(
-            property_dict={"baseColor": [0.2, 0.5, 0.5]},
-            number_of_light_sources=4
-        )
-
-
-        # lighted spheres with a color
-        sphere_geometry = SphereGeometry()
-        sphere_left_top = Mesh(sphere_geometry, flat_material)
-        sphere_left_top.set_position([-2.5, 1.5, 0])
-        sphere_center_top = Mesh(sphere_geometry, lambert_material)
-        sphere_center_top.set_position([0, 1.5, 0])
-        sphere_right_top = Mesh(sphere_geometry, phong_material)
-        sphere_right_top.set_position([2.5, 1.5, 0])
-
-        # lighted materials with a texture
-        textured_flat_material = FlatMaterial(
-            texture=Texture("images/grid.jpg"),
-            number_of_light_sources=4
-        )
-        textured_lambert_material = LambertMaterial(
-            texture=Texture("images/grid.jpg"),
-            number_of_light_sources=4
-        )
-        textured_phong_material = PhongMaterial(
-            texture=Texture("images/grid.jpg"),
-            number_of_light_sources=4
-        )
-
-
-        # lighted spheres with a texture
-        sphere_left_bottom = Mesh(sphere_geometry, textured_flat_material)
-        sphere_left_bottom.set_position([-2.5, -1.5, 0])
-        sphere_center_bottom = Mesh(sphere_geometry, textured_lambert_material)
-        sphere_center_bottom.set_position([0, -1.5, 0])
-        # sphere_right_bottom = Mesh(sphere_geometry, textured_phong_material)
-        # sphere_right_bottom.set_position([2.5, -1.5, 0])
-
-        self.scene.add(sphere_left_top)
-        self.scene.add(sphere_center_top)
-        self.scene.add(sphere_right_top)
-        self.scene.add(sphere_left_bottom)
-        self.scene.add(sphere_center_bottom)
-
-        # box = Mesh(BoxGeometry(), textured_flat_material)
-        # box.set_position([2.5, -1.5, 0])
-        # self.scene.add(box)
-        caixa = Caixa(light_sources=4)
-        caixa.set_position([2.5, -1.5, 0])
+        # Instrumentos
+        caixa = Caixa(light_sources=2)
+        caixa.set_position([2.1, -1.2, -10])
         self.scene.add(caixa)
 
+        castanholas = Castanholas(light_sources=2)
+        castanholas.set_position([-1.7, -1.1, -10])
+        self.scene.add(castanholas)
 
-        # circle1 = Note(x=-1.2, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note1.png", r=0.1, g=0.0, b=0.0)
-        # circle2 = Note(x=-0.4, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note2.png", r=0.1, g=0.0, b=0.0)
-        # circle3 = Note(x= 0.4, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note3.png", r=0.1, g=0.0, b=0.0)
-        # circle4 = Note(x= 1.2, y=0.0, z=3.0, radius=0.5, res=25, texture="images/note1.png", r=0.1, g=0.0, b=0.0)
-        # self.scene.add(circle1)
-        # self.scene.add(circle2)
-        # self.scene.add(circle3)
-        # self.scene.add(circle4)
-
+        # Beatmap Player
         self.bm_player = BmPlayer("beatmaps/recital.bm", self.scene)
         self.game_ui = UI()
         self.menu_ui = MenuUI()
