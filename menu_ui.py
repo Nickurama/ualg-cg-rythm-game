@@ -13,7 +13,7 @@ class MenuUI(Object3D):
     TITLE_X = 0.0
     TITLE_Y = 1.0
     TITLE_SIZE = 0.3
-    TITLE_TEXT = "O Recital Espanhol"
+    TITLE_TEXT = "El Recital Espanol"
 
     PLAY_TEXT = "Jogar!"
     PLAY_X = 0.0
